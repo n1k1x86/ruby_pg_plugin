@@ -1,0 +1,2 @@
+module PskbProductGroupsHelper
+end

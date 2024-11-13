@@ -1,0 +1,17 @@
+<h1>New product group</h1>
+
+<%= form_with(model: @pskb_product_group, url: pskb_product_groups_path) do |form| %>  
+  <div>
+    <%= form.label :name %>
+    <%= form.text_field :name %>
+  </div>
+
+  <div>
+    <%= form.label :owner_id, 'Owner' %>
+    <%= form.collection_select :owner_id, @users, :id, :name, { prompt: 'Select Owner' } %>
+  </div>
+
+  <div>
+    <%= form.submit 'Create Group' %>
+  </div>
+<% end %>

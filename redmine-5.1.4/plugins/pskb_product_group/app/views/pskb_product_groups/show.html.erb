@@ -1,0 +1,10 @@
+<h2>PskbProductGroupController#show</h2>
+
+<div>
+    <%= @pskb_product_group.id %>
+    <%= @pskb_product_group.name %>
+    <%= @pskb_product_group.owner_id %>
+</div>
+<%= delete_link pskb_product_group_path(@pskb_product_group)%>
+<%= link_to 'Редактировать', edit_pskb_product_group_path(@pskb_product_group) %>
+

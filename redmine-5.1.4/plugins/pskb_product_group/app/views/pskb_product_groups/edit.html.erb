@@ -1,0 +1,30 @@
+<h2>PskbProductGroupController#edit</h2>
+
+<h1>Edit Group</h1>
+
+<%= form_with model: @pskb_product_group, local: true do |form| %>
+  <% if @pskb_product_group.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@pskb_product_group.errors.count, "error") %> prohibited this group from being saved:</h2>
+      <ul>
+        <% @pskb_product_group.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :name %>
+    <%= form.text_field :name %>
+  </div>
+
+  <div>
+    <%= form.label :owner_id, 'Owner' %>
+    <%= form.collection_select :owner_id, @users, :id, :name, { prompt: 'Select Owner' } %>
+  </div>
+
+  <div>
+    <%= form.submit 'Update Group' %>
+  </div>
+<% end %>

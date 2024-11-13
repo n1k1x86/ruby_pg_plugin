@@ -1,0 +1,10 @@
+<h2>PskbProductGroupController</h2>
+<% @result.each do |res| %>
+  <p>
+    <%= res[0].id %>
+    <%= link_to res[0].name, pskb_product_group_path(res[0]) %>
+    <%= res[0].owner_id %>
+    <%= res[1].login%>
+    <%= res[1].name%>
+  </p>
+<% end %>

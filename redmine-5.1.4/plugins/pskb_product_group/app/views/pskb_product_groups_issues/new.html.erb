@@ -1,0 +1,22 @@
+<h2>PskbProductGroupsIssueController#new</h2>
+
+<%= form_with model: @pskb_product_groups_issue, local: true do |form| %>
+  <div>
+    <%= form.label :percentage, 'Percentage' %>
+    <%= form.text_field :percentage %>
+  </div>
+  
+  <div>
+    <%= form.label :issue_id, 'Issue' %>
+    <%= form.collection_select :issue_id, @issues, :id, :id, prompt: 'Select issue' %>
+  </div>
+  
+  <div>
+    <%= form.label :pskb_product_groups_id, 'Product Group' %>
+    <%= form.collection_select :pskb_product_groups_id, @pskb_product_groups, :id, :name, { prompt: 'Select product group' } %>
+  </div>
+
+  <div>
+    <%= form.submit 'Create product group\'s issue' %>
+  </div>
+<% end %>

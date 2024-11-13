@@ -1,0 +1,10 @@
+<h2>PskbProductGroupsIssueController#index</h2>
+
+<% @res.each do |res| %>
+    <p>
+        <%= res[0].id %>
+        <%= res[1].subject %>
+        <%= res[2].name %>
+        <%= res[0].percentage %>
+    </p>
+<% end %>
