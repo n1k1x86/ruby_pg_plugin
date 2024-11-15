@@ -1,19 +1,24 @@
 <h2>PskbProductGroupsIssueController#edit</h2>
 
 <%= form_with model: @pskb_product_groups_issue, local: true do |form| %>
+  <div style="display: none;">
+     <%= form.label :id, 'Id' %>
+    <%= form.text_field :id, required: true %>
+  </div>
+
   <div>
     <%= form.label :percentage, 'Percentage' %>
-    <%= form.text_field :percentage %>
+    <%= form.number_field :percentage, in: 0..100, step: 1, required: true %>
   </div>
   
   <div>
     <%= form.label :issue_id, 'Issue' %>
-    <%= form.collection_select :issue_id, @issues, :id, :id, prompt: 'Select issue' %>
+    <%= form.collection_select :issue_id, @issues, :id, :id, prompt: 'Select issue', required: true %>
   </div>
   
   <div>
     <%= form.label :pskb_product_groups_id, 'Product Group' %>
-    <%= form.collection_select :pskb_product_groups_id, @pskb_product_groups, :id, :name, { prompt: 'Select product group' } %>
+    <%= form.collection_select :pskb_product_groups_id, @pskb_product_groups, :id, :name, { prompt: 'Select product group' }, required: true %>
   </div>
 
   <div>
