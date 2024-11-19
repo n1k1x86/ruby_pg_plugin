@@ -1,6 +1,13 @@
 class PskbProductGroupsController < ApplicationController
   rescue_from ActiveRecord::RecordNotFound, with: :not_found_404
 
+  def get_owner
+    pgObj = PskbProductGroups.find(params[:id])
+    owner = User.find(pgObj.owner_id)
+
+    render json: {id: owner.id, name: owner.name}, status: :ok
+  end
+
   def index
     @pskb_product_group = PskbProductGroups.all
     @result = []

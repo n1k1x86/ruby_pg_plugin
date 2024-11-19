@@ -1,0 +1,200 @@
+<style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+  
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border: 1px solid #ddd;
+    }
+  
+    th {
+      background-color: #f4f4f4;
+      font-weight: bold;
+    }
+  
+    td {
+      background-color: #fff;
+    }
+  
+    tr:nth-child(even) td {
+      background-color: #f9f9f9;
+    }
+  
+    tr:hover td {
+      background-color: #f1f1f1;
+    }
+  
+    /* Стили для модального окна */
+    .modal-form {
+      display: none;
+      position: fixed;
+      background: #ffffff85;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+  
+    .modal-content {
+      background-color: #fefefe;
+      margin: 15% auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 50%;
+    }
+  
+      .close-btn {
+          color: #aaa;
+          float: right;
+          font-size: 28px;
+          font-weight: bold;
+      }
+      .close-btn:hover,
+      .close-btn:focus {
+          color: black;
+          text-decoration: none;
+          cursor: pointer;
+      }
+  
+    .add-button {
+      font-size: 16px;
+      border-radius: 5px;
+      color: black;
+      margin: 10px
+    }
+  
+    .add-button:hover {
+      background-color: #45a049;
+    }
+  
+    /* Стиль для формы */
+    form div {
+      margin-bottom: 10px;
+    }
+</style>
+  
+  <hr>
+  
+  <div id="new-group-modal" class="modal-form" style="display: none;">
+    <div class="modal-content">
+      <span class="close-btn">&times;</span>
+          <h2>Ответственность продуктовой группы</h2>
+          <%= form_with model: @pskb_product_groups_issue, method: :post, url: '/pskb_product_groups_issues', local: true do |form| %>
+          <div>
+              <%= form.label :percentage, 'Доля ответственности' %>
+              <%= form.number_field :percentage, in: 0..100, step: 1, required: true %>
+          </div>
+          
+          <div style="display: none;">
+              <%= form.label :issue_id, 'Issue' %>
+              <%= form.collection_select :issue_id, issues, :id, :id, prompt: 'Select issue', selected: @issue.id, required: true %>
+          </div>
+          
+          <div>
+              <%= form.label :pskb_product_groups_id, 'Продуктовая группа' %>
+              <%= form.collection_select :pskb_product_groups_id, pskb_product_groups, :id, :name, { prompt: 'Select product group' }, required: true %>
+          </div>
+  
+          <div>
+              <%= form.submit 'Создать' %>
+          </div>
+          <% end %>
+    </div>
+  </div>
+
+  <div id="edit-group-modal" class="modal-form" style="display: none;">
+  <div class="modal-content">
+      <span class="close-btn">&times;</span>
+          <h2>Ответственность продуктовой группы</h2>
+          <%= form_with model: @pskb_product_groups_issue, method: :post, url: '/pskb_product_groups_issues', local: true do |form| %>
+          <div>
+              <%= form.label :percentage, 'Доля ответственности' %>
+              <%= form.number_field :percentage, in: 0..100, step: 1, required: true %>
+          </div>
+          
+          <div style="display: none;">
+              <%= form.label :issue_id, 'Issue' %>
+              <%= form.collection_select :issue_id, issues, :id, :id, prompt: 'Select issue', selected: @issue.id, required: true %>
+          </div>
+          
+          <div>
+              <%= form.label :pskb_product_groups_id, 'Продуктовая группа' %>
+              <%= form.collection_select :pskb_product_groups_id, pskb_product_groups, :id, :name, { prompt: 'Select product group' }, required: true %>
+          </div>
+  
+          <div>
+              <%= form.submit 'Создать' %>
+          </div>
+          <% end %>
+    </div>
+  </div>
+  <%= button_tag 'Добавить продуктовую группу', class: 'add-button', id: 'add-group-btn' %>
+  <%= button_tag 'Сохранить продуктовые группы', class: 'add-button', id: 'save-groups-btn' %>
+  
+  <table border="1">
+    <thead>
+      <tr>
+        <th>Продуктовая группа</th>
+        <th>Ответственность (%)</th>
+        <th>Владелец</th>
+        <th>Действия</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% product_groups.each do |product| %>
+        <tr>
+          <td style="background-color: white;"><%= product[0] %></td>
+          <td style="background-color: white;"><%= product[1] %></td>
+          <td style="background-color: white;"><%= product[2] %></td>
+          <td>
+            <!-- Кнопка удаления -->
+            <%= form_with url: pskb_product_groups_issue_path(product[3]), method: :delete, local: true do %>
+              <%= submit_tag 'Удалить', data: { confirm: 'Вы уверены?' } %>
+            <% end %>
+            <!-- Кнопка редактирования -->
+            <%= form_with url: edit_pskb_product_groups_issue_path(product[3]), method: :get, local: true do %>
+              <%= submit_tag 'Редактировать'%>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  
+  <script>
+    // Получаем элементы
+    const modalAdd = document.getElementById("new-group-modal");
+    const openBtnAdd = document.getElementById("add-group-btn");
+  
+    const modalEdit = undefined;
+    const modalBtnEdit = undefined;
+
+    const closeBtn = document.querySelector(".close-btn");
+
+    const sendAddedGroups = undefined;
+  
+    // Открытие модального окна
+    openBtn.onclick = function() {
+      modal.style.display = "block";
+    }
+  
+    // Закрытие модального окна
+    closeBtn.onclick = function() {
+      modal.style.display = "none";
+    }
+  
+    // Закрытие окна при клике вне модального окна
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        modal.style.display = "none";
+      }
+    }
+
+  </script>
