@@ -210,6 +210,58 @@
     const revBtns = document.querySelectorAll(".rev-button");
     const editBtns = document.querySelectorAll(".edit-button");
 
+    const saveBtn = document.getElementById("save-groups-btn");
+
+    function extractData(row){
+      const pgId = row.cells[1].textContent;
+      const percentage = row.cells[2].textContent;
+      const pgIssueId = row.cells[4].textContent;
+
+      return {
+        pgId: pgId,
+        percentage: percentage,
+        pgIssueId: pgIssueId
+      }
+    }
+
+    function saveGroupsEvent() {
+      const rows = document.getElementById("pgTable").getElementsByTagName('tbody')[0].rows;
+      let dataJson = {
+        pgIssuesData: {
+          "0": [],
+          "1": [],
+          "2": [],
+          "3": []
+        }
+      }
+      for (let row of rows) {
+        dataJson.pgIssuesData[row.dataset.state].push(extractData(row));
+      }
+
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', '/pskb_product_groups_issues', false);
+      xhr.setRequestHeader('Content-Type', 'application/json');
+      xhr.setRequestHeader('Accept', 'application/json');
+
+      const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+      xhr.setRequestHeader('X-CSRF-Token', csrfToken);
+
+      xhr.send(JSON.stringify(dataJson));
+
+      if (xhr.readyState === 4) {
+        if (xhr.status === 201) {
+          const response = JSON.parse(xhr.responseText);
+          console.log('Success:', response);
+        } else {
+          const response = JSON.parse(xhr.responseText);
+          console.log(response)
+          console.error('Error:', xhr.status, xhr.statusText);
+        }
+      }
+    };
+
+    saveBtn.addEventListener('click', saveGroupsEvent);
+
     function delBtnEvent() {
       const row = this.closest('tr');
       if (row.dataset.state == "3"){
