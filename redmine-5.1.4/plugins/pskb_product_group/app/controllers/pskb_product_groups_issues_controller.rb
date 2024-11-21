@@ -1,70 +1,39 @@
 class PskbProductGroupsIssuesController < ApplicationController
 
-  def index
-    @res = []
-    for el in PskbProductGroupsIssue.all do
-      issue = Issue.find_by(id: el.issue_id)
-      if issue.nil?
-        next
-      end
-      pg = PskbProductGroups.find_by(id: el.pskb_product_groups_id)
-      if pg.nil?
-        next
-      end
-      @res << [el, issue, pg]
-    end
-    @res
-  end
-
-  def show
-    id = params[:id]
-    @pskb_product_groups_issue = PskbProductGroupsIssue.find(id)
-  end
-
-  def destroy
-    id = params[:id]
-    @product_groups_issue = PskbProductGroupsIssue.find(id)
-    @product_groups_issue.destroy
-    redirect_to request.referer 
-  end
-
   def create
-    pg_issues = params["pgIssuesData"]
-    if !check_percentage(pg_issues["0"] + pg_issues["1"] + pg_issues["2"])
-      render json: {"error": "percentage is not 100"}, status: :unprocessable_entity
-    end
-  end
-
-  def update
-    @pskb_product_groups_issue = PskbProductGroupsIssue.find(params[:id])
-    percentage = update_params_pg_issue[:percentage].to_i
-    sum = get_percentage_sum(update_params_pg_issue[:issue_id], update_params_pg_issue[:id])
-    puts "LOGLOG"
-    puts sum
-    if (sum + percentage) > 100
-      redirect_to request.referer, flash: {error: "Сумма процентов не может быть больше 100, допустимое значение: #{100-sum}"}
+    pg_issues_by_status = params["pgIssuesData"]
+    all_pg_issues = pg_issues_by_status["0"] + pg_issues_by_status["1"] + pg_issues_by_status["2"]
+    if !check_percentage(all_pg_issues)
+      render json: {"error": "percentage is not 100", "error_code": "0"}, status: :unprocessable_entity
       return
-    end 
-
-    if @pskb_product_groups_issue.update(update_params_pg_issue)
-      redirect_to '/issues/' + update_params_pg_issue[:issue_id]
-    else
-      @users = User.all
-      @issues = Issue.all
-      render :edit
     end
-  end
-
-  def edit
-    @pskb_product_groups_issue = PskbProductGroupsIssue.find(params[:id])
-    @issues = Issue.all
-    @pskb_product_groups = PskbProductGroups.all
-  end
-
-  def new
-    @pskb_product_groups_issue = PskbProductGroupsIssue.new
-    @issues = Issue.all
-    @pskb_product_groups = PskbProductGroups.all
+    if check_null_data(all_pg_issues)
+      render json: {"error": "null data is not acceptable", "error_code": "1"}, status: :unprocessable_entity
+      return
+    end
+    if !dublicate_check(all_pg_issues)
+      render json: {"error": "dublicate product groups is not accepable", "error_code": "2"}, status: :unprocessable_entity
+      return
+    end
+    if pg_issues_by_status["3"].length != 0
+      if !delete_operation(pg_issues_by_status["3"])
+        render json: {"error": "delete errors", "error_code": "3"}, status: 500
+        return
+      end
+    end
+    if pg_issues_by_status["2"].length != 0
+      if !update_operation(pg_issues_by_status["2"])
+        render json: {"error": "update errors", "error_code": "4"}, status: 500
+        return
+      end
+    end
+    if pg_issues_by_status["1"].length != 0
+      if !create_operation(pg_issues_by_status["1"])
+        render json: {"error": "creat errors", "error_code": "5"}, status: 500
+        return
+      end
+    end
+    render json: {"success": "good"}, status: 201
   end
 
   private
@@ -78,6 +47,23 @@ class PskbProductGroupsIssuesController < ApplicationController
     return sum == 100
   end
 
+  def check_null_data(records)
+    for record in records do 
+      if record.values.any? { |value| value.nil? || value == '' } 
+        return true
+      end
+    end
+    false
+  end
+
+  def dublicate_check(records) 
+    pg_id_arr = []
+    for record in records do 
+      pg_id_arr << record["pgId"]
+    end
+    return pg_id_arr.length == pg_id_arr.uniq.length
+  end
+
   def product_groups_issue_params 
     params.permit(:issue_id, :pskb_product_groups_id, :percentage)
   end
@@ -86,11 +72,36 @@ class PskbProductGroupsIssuesController < ApplicationController
     params.require(:pskb_product_groups_issue).permit(:id, :issue_id, :pskb_product_groups_id, :percentage)
   end
 
-  def get_percentage_sum(issue_id, id = nil)
-    sum = 0
-    for el in PskbProductGroupsIssue.where(issue_id: issue_id).where.not(id: id) do
-      sum += el.percentage
+  def delete_operation(pg_issues_deleted)
+    for record in pg_issues_deleted do 
+      @pg_issue = PskbProductGroupsIssue.find_by(id: record["pgIssueId"])
+      if !@pg_issue.destroy
+        return false
+      end
     end
-    sum
+    return true
+  end
+
+  def update_operation(pg_issues_updated)
+    for record in pg_issues_updated do 
+      @pg_issue = PskbProductGroupsIssue.find_by(id: record["pgIssueId"])
+      @pg_issue.percentage = record["percentage"]
+      @pg_issue.pskb_product_groups_id = record["pgId"]
+
+      if !@pg_issue.save 
+        return false
+      end
+    end
+    return true
+  end
+
+  def create_operation(pg_issues_created)
+    for record in pg_issues_created
+      @pg_issue = PskbProductGroupsIssue.new(issue_id: record["issueId"], pskb_product_groups_id: record["pgId"], percentage: record["percentage"])
+      if !@pg_issue.save 
+        return false
+      end
+    end
+    return true
   end
 end

@@ -107,6 +107,7 @@
 </style>
   
   <hr>
+  <div id="issue_id" style="display: none;"><%= issue_id %></div>
   
   <div id="new-group-modal" class="modal-form" style="display: none;">
     <div class="modal-content">
@@ -216,11 +217,13 @@
       const pgId = row.cells[1].textContent;
       const percentage = row.cells[2].textContent;
       const pgIssueId = row.cells[4].textContent;
+      const issueId = document.getElementById("issue_id").textContent;
 
       return {
         pgId: pgId,
         percentage: percentage,
-        pgIssueId: pgIssueId
+        pgIssueId: pgIssueId,
+        issueId: issueId
       }
     }
 
@@ -252,6 +255,7 @@
         if (xhr.status === 201) {
           const response = JSON.parse(xhr.responseText);
           console.log('Success:', response);
+          window.location.reload();
         } else {
           const response = JSON.parse(xhr.responseText);
           console.log(response)

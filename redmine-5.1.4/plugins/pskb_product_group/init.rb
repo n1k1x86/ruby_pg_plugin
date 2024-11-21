@@ -30,7 +30,7 @@ Redmine::Plugin.register :pskb_product_group do
         owner = User.find(pg.owner_id)
         @pg_percentage_table << [pg.name, pg.id, el.percentage, owner.name, el.id]
       end
-      context[:controller].render_to_string(partial: 'pskb_product_groups/extra_issue_info', locals: { product_groups: @pg_percentage_table, issues: @issues, pskb_product_groups: @pskb_product_groups })
+      context[:controller].render_to_string(partial: 'pskb_product_groups/extra_issue_info', locals: { product_groups: @pg_percentage_table, issues: @issues, pskb_product_groups: @pskb_product_groups, issue_id: @issue.id })
     end
   end
 end
