@@ -4,15 +4,15 @@ class PskbProductGroupsIssuesController < ApplicationController
     pg_issues_by_status = params["pgIssuesData"]
     all_pg_issues = pg_issues_by_status["0"] + pg_issues_by_status["1"] + pg_issues_by_status["2"]
     if !check_percentage(all_pg_issues)
-      render json: {"error": "percentage is not 100", "error_code": "0"}, status: :unprocessable_entity
+      render json: {"error": "Сумма процентов должна равняться 100", "error_code": "0"}, status: :unprocessable_entity
       return
     end
     if check_null_data(all_pg_issues)
-      render json: {"error": "null data is not acceptable", "error_code": "1"}, status: :unprocessable_entity
+      render json: {"error": "Не допускаются пустые поля", "error_code": "1"}, status: :unprocessable_entity
       return
     end
     if !dublicate_check(all_pg_issues)
-      render json: {"error": "dublicate product groups is not accepable", "error_code": "2"}, status: :unprocessable_entity
+      render json: {"error": "Дубликаты групп не допускаются", "error_code": "2"}, status: :unprocessable_entity
       return
     end
     if pg_issues_by_status["3"].length != 0
@@ -29,7 +29,7 @@ class PskbProductGroupsIssuesController < ApplicationController
     end
     if pg_issues_by_status["1"].length != 0
       if !create_operation(pg_issues_by_status["1"])
-        render json: {"error": "creat errors", "error_code": "5"}, status: 500
+        render json: {"error": "create errors", "error_code": "5"}, status: 500
         return
       end
     end
