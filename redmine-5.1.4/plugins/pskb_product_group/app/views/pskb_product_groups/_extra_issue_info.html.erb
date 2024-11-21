@@ -259,6 +259,7 @@
         } else {
           const response = JSON.parse(xhr.responseText);
           console.log(response)
+          alert(response.error);
           console.error('Error:', xhr.status, xhr.statusText);
         }
       }
