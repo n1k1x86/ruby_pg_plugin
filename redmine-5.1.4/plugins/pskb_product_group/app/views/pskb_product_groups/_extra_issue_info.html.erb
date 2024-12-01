@@ -185,7 +185,7 @@
           <td class="hidden-td"><%= product[4] %></td>
           <td>
             <div class="action-div">
-              <button type="submit" class="del-button">Удалить</button><button type="submit" class="rev-button">Откатить</button><button type="submit" class="edit-button">Редактировать</button>
+              <button type="submit" class="edit-button">Редактировать</button><button type="submit" class="del-button">Удалить</button>
             </div>
           </td>
         </tr>
@@ -205,7 +205,6 @@
     const openBtnAdd = document.getElementById("add-group-btn");
 
     const delBtns = document.querySelectorAll(".del-button");
-    const revBtns = document.querySelectorAll(".rev-button");
     const editBtns = document.querySelectorAll(".edit-button");
 
     const saveBtn = document.getElementById("save-groups-btn");
@@ -276,15 +275,6 @@
       }
     }
 
-    function revBtnEvent() {
-      const row = this.closest('tr');
-      if(row.dataset.initState == "1") {
-        row.remove();
-      } else {
-        revertInitialState(row);
-      }
-    }
-
     function editBtnEvent() {
       const row = this.closest('tr');
       const rowIndex = row.rowIndex - 1;
@@ -305,10 +295,6 @@
 
     delBtns.forEach(btn => {
       btn.addEventListener('click', delBtnEvent);
-    })
-
-    revBtns.forEach(btn => {
-      btn.addEventListener('click', revBtnEvent);
     })
 
     editBtns.forEach(btn => {
@@ -341,17 +327,6 @@
       } else if (event.target == modalEdit){
         modalEdit.style.display == "none";
       }
-    }
-
-    function revertInitialState(row) {
-      const rowIndex = row.rowIndex - 1;
-      if (!!rowsState[rowIndex]){
-        row.cells[0].textContent = rowsState[rowIndex].groupName;
-        row.cells[1].textContent = rowsState[rowIndex].groupId;
-        row.cells[2].textContent = rowsState[rowIndex].percentage;
-        row.cells[3].textContent = rowsState[rowIndex].ownerName;
-      }
-      row.dataset.state = row.dataset.initState;
     }
 
     function createBtn(btn_class, eventCallback, textContent) {
@@ -390,15 +365,14 @@
 
 
       const delButton = createBtn('del-button', delBtnEvent, 'Удалить');
-      const revButton = createBtn('rev-button', revBtnEvent, 'Откатить');
       const editButton = createBtn('edit-button', editBtnEvent, 'Редактировать');
 
       const divBtns = document.createElement('div');
       divBtns.classList.add('action-div')
 
-      divBtns.appendChild(delButton);
-      divBtns.appendChild(revButton);
       divBtns.appendChild(editButton);
+      divBtns.appendChild(delButton);
+      
 
       cell5.appendChild(divBtns);
     }
