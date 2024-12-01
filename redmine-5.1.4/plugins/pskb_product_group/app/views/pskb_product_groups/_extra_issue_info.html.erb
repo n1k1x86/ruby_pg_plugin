@@ -2,7 +2,6 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 20px;
     }
 
     table tbody tr[data-state="0"] td {
@@ -89,7 +88,7 @@
       font-size: 16px;
       border-radius: 5px;
       color: black;
-      margin: 10px
+      margin-top: 10px;
     }
   
     .add-button:hover {
@@ -167,10 +166,6 @@
     </div>
   </div>
   
-  
-  <%= button_tag 'Добавить продуктовую группу', class: 'add-button', id: 'add-group-btn' %>
-  <%= button_tag 'Сохранить продуктовые группы', class: 'add-button', id: 'save-groups-btn' %>
-  
   <table id='pgTable' border="1">
     <thead>
       <tr>
@@ -197,6 +192,8 @@
       <% end %>
     </tbody>
   </table>
+  <%= button_tag 'Добавить продуктовую группу', class: 'add-button', id: 'add-group-btn' %>
+  <%= button_tag 'Сохранить продуктовые группы', class: 'add-button', id: 'save-groups-btn' %>
   
   <script>
     var rowsState = {};
