@@ -115,7 +115,7 @@
           <%= form_with model: @pskb_product_groups_issue, method: :post, url: '#', local: true, id: 'addForm' do |form| %>
           <div>
               <%= form.label :percentage, 'Доля ответственности' %>
-              <%= form.number_field :percentage, in: 0..100, step: 1, required: true %>
+              <%= form.number_field :percentage, in: 1..100, step: 1, required: true %>
           </div>
           
           <div style="display: none;">
@@ -142,7 +142,7 @@
           <%= form_with model: @pskb_product_groups_issue, method: :post, url: '#', local: true, id: 'editForm' do |form| %>
           <div>
               <%= form.label :percentage, 'Доля ответственности' %>
-              <%= form.number_field :percentage, in: 0..100, step: 1, required: true, id: 'edit-percentage' %>
+              <%= form.number_field :percentage, in: 1..100, step: 1, required: true, id: 'edit-percentage' %>
           </div>
           
           <div style="display: none;">
