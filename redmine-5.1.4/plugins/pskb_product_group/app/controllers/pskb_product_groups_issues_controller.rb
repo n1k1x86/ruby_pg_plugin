@@ -51,11 +51,15 @@ class PskbProductGroupsIssuesController < ApplicationController
       pg = PskbProductGroups.find(record["pgId"])
       owners << User.find(pg.owner_id)
     end
+    Rails.logger.info("OWNERS LOG")
+    Rails.logger.info(owners)
     return owners
   end
 
   def send_mails(owners)
     for owner in owners do
+      Rails.logger.info("OWNER LOG")
+      Rails.logger.info(owner)
       Mailer.send_msg_to_pg_owners(owner, "Продуктовые группы", "Вы были добавлены в долю")
     end
   end

@@ -7,6 +7,13 @@ module PskbProductGroup
 
       module ClassMethods
         def send_msg_to_pg_owners(user, subject, message)
+          Rails.logger.info("user mail")
+          Rails.logger.info(user)
+          Rails.logger.info('subject mail')
+          Rails.logger.info(subject)
+          Rails.logger.info('message mail')
+          Rails.logger.info(message)
+          
           mail(
             to: user.mail,
             subject: subject,
