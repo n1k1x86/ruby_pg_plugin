@@ -12,6 +12,10 @@ Redmine::Plugin.register :pskb_product_group do
   #   require_dependency 'pskb_product_group/patches/user_patch'
   #   User.include PskbProductGroup::Patches::UserPatch unless User.included_modules.include?(PskbProductGroup::Patches::UserPatch)
   # end
+  unless Mailer.included_modules.include?(PskbProductGroup::Patches::MailerPatch)
+    Mailer.send(:include, PskbProductGroup::Patches::MailerPatch)
+  end
+
   class ViewHookListner < Redmine::Hook::ViewListener
 
     render_on(:view_issues_show_details_bottom, :partial => 'pskb_product_groups/extra_issue_info')

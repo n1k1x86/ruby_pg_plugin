@@ -1,8 +1,11 @@
+require 'mailer'
+
 class PskbProductGroupsIssuesController < ApplicationController
 
   def create
     pg_issues_by_status = params["pgIssuesData"]
     all_pg_issues = pg_issues_by_status["0"] + pg_issues_by_status["1"] + pg_issues_by_status["2"]
+
     if !check_percentage(all_pg_issues)
       render json: {"error": "Сумма процентов должна равняться 100", "error_code": "0"}, status: :unprocessable_entity
       return
@@ -33,10 +36,29 @@ class PskbProductGroupsIssuesController < ApplicationController
         return
       end
     end
+    puts "LOGI start"
+
+    send_mails(get_owners(all_pg_issues))
     render json: {"success": "good"}, status: 201
   end
 
   private
+
+  def get_owners(all_pg_issues)
+    owners = []
+    for record in all_pg_issues do 
+      puts record
+      pg = PskbProductGroups.find(record["pgId"])
+      owners << User.find(pg.owner_id)
+    end
+    return owners
+  end
+
+  def send_mails(owners)
+    for owner in owners do
+      Mailer.send_msg_to_pg_owners(owner, "Продуктовые группы", "Вы были добавлены в долю")
+    end
+  end
 
   def check_percentage(records)
     sum = 0
