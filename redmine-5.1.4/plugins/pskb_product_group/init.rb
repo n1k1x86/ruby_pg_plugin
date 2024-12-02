@@ -22,27 +22,30 @@ Redmine::Plugin.register :pskb_product_group do
 
     def view_issues_show_details_bottom(context = {})
       @issue = context[:issue]
-      @issues = Issue.all
-      @pskb_product_groups = PskbProductGroups.all
-      @product_groups = PskbProductGroupsIssue.where("issue_id = ?", @issue.id)
-      @pg_percentage_table = []
-      for el in @product_groups do
-        pg = PskbProductGroups.find_by(id: el.pskb_product_groups_id)
-        if pg.nil?
-          next
+      if @issue.tracker_id == 1
+        @issues = Issue.all
+        @pskb_product_groups = PskbProductGroups.all
+        @product_groups = PskbProductGroupsIssue.where("issue_id = ?", @issue.id)
+        @pg_percentage_table = []
+        for el in @product_groups do
+          pg = PskbProductGroups.find_by(id: el.pskb_product_groups_id)
+          if pg.nil?
+            next
+          end
+          owner = User.find(pg.owner_id)
+          @pg_percentage_table << [pg.name, pg.id, el.percentage, owner.name, el.id]
         end
-        owner = User.find(pg.owner_id)
-        @pg_percentage_table << [pg.name, pg.id, el.percentage, owner.name, el.id]
+        context[:controller].render_to_string(partial: 'pskb_product_groups/extra_issue_info', locals: { product_groups: @pg_percentage_table, issues: @issues, pskb_product_groups: @pskb_product_groups, issue_id: @issue.id })
       end
-      context[:controller].render_to_string(partial: 'pskb_product_groups/extra_issue_info', locals: { product_groups: @pg_percentage_table, issues: @issues, pskb_product_groups: @pskb_product_groups, issue_id: @issue.id })
     end
 
     def pg_empty_notify(context = {})
       @issue = context[:issue]
-      @product_groups = PskbProductGroupsIssue.where("issue_id = ?", @issue.id)
-
-      if @product_groups.length == 0
-        context[:controller].render_to_string(partial: 'pskb_product_groups/pg_empty_notify')
+      if @issue.tracker_id == 1
+        @product_groups = PskbProductGroupsIssue.where("issue_id = ?", @issue.id)
+        if @product_groups.length == 0
+          context[:controller].render_to_string(partial: 'pskb_product_groups/pg_empty_notify')
+        end
       end
     end
   end
