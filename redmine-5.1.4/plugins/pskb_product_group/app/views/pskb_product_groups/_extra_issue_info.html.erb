@@ -83,6 +83,12 @@
         text-decoration: none;
         cursor: pointer;
     }
+
+    .disabled-btn {
+      pointer-events: none;
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
   
     .add-button {
       font-size: 16px;
@@ -90,7 +96,7 @@
       color: black;
       margin-top: 10px;
     }
-  
+
     .add-button:hover {
       background-color: #45a049;
     }
@@ -193,7 +199,7 @@
     </tbody>
   </table>
   <%= button_tag 'Добавить продуктовую группу', class: 'add-button', id: 'add-group-btn' %>
-  <%= button_tag 'Сохранить продуктовые группы', class: 'add-button', id: 'save-groups-btn' %>
+  <%= button_tag 'Сохранить продуктовые группы', class: 'add-button disabled-btn', id: 'save-groups-btn' %>
   
   <script>
     var rowsState = {};
@@ -272,6 +278,7 @@
         row.remove();
       } else {
         row.dataset.state = "3";
+        saveBtn.classList.remove('disabled-btn')
       }
     }
 
@@ -308,8 +315,6 @@
       modalEdit.style.display = "none";
     }
 
-    const sendAddedGroups = undefined;
-  
     // Открытие модального окна
     openBtnAdd.onclick = function() {
       modalAdd.style.display = "block";
@@ -375,26 +380,13 @@
       
 
       cell5.appendChild(divBtns);
-    }
-
-    // Сохранение первоначального состояния перед редактированием
-    function saveInitialState(rowIndex, groupName, groupId, percentage, ownerName){
-      rowsState[rowIndex] = {
-        groupName: groupName,
-        groupId: groupId,
-        percentage: percentage,
-        ownerName: ownerName
-      }
+      saveBtn.classList.remove('disabled-btn')
     }
 
     // Редактирование строки
     function editTableRow(tableId, formObj) {
       let table = document.getElementById(tableId).getElementsByTagName('tbody')[0];
       let row = table.rows[formObj.rowIndex];
-      if (rowsState[formObj.rowIndex] == null){
-        saveInitialState(formObj.rowIndex, row.cells[0].textContent,
-        row.cells[1].textContent, row.cells[2].textContent, row.cells[3].textContent);
-      }
 
       row.cells[0].textContent = formObj.groupName;
       row.cells[1].textContent = formObj.groupId;
@@ -406,6 +398,8 @@
       } else {
         row.dataset.state = "2";
       }
+      saveBtn.classList.remove('disabled-btn')
+
     }
 
     function getOwner(groupId) {
