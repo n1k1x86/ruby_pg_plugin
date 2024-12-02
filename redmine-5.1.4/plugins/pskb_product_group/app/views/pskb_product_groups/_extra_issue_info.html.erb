@@ -1,4 +1,10 @@
 <style>
+    .pg-table-container {
+      background: #B8B799;
+      padding: 10px;
+      border-radius: 10px;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
@@ -110,7 +116,7 @@
       text-align: center;
     }
 </style>
-  
+<div class='pg-table-container'>
   <hr>
   <div id="issue_id" style="display: none;"><%= issue_id %></div>
   
@@ -200,7 +206,8 @@
   </table>
   <%= button_tag 'Добавить продуктовую группу', class: 'add-button', id: 'add-group-btn' %>
   <%= button_tag 'Сохранить продуктовые группы', class: 'add-button disabled-btn', id: 'save-groups-btn' %>
-  
+  <hr>
+</div>
   <script>
     var rowsState = {};
 
