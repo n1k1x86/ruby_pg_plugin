@@ -1,3 +1,3 @@
-= pskb_biz_domain
+= pskb_dep_issues
 
 Description goes here
