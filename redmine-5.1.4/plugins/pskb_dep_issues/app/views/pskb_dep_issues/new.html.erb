@@ -1,0 +1,17 @@
+<h2>PskbDepIssuesController#new</h2>
+<%= form_with(model: @pskb_dep_issue, url: pskb_dep_issues_path) do |form| %>
+
+  <div>
+    <%= form.label :user_id, 'Voter' %>
+    <%= form.collection_select :user_id, @users, :id, :name, { prompt: 'Select Voter' } %>
+  </div>
+
+  <div>
+    <%= form.label :dep_id, 'Department' %>
+    <%= form.collection_select :dep_id, @departments, :id, :name, { prompt: 'Select Department' } %>
+  </div>
+
+  <div>
+    <%= form.submit 'Create Department' %>
+  </div>
+<% end %>
