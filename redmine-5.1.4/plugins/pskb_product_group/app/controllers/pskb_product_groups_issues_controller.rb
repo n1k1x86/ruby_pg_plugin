@@ -5,7 +5,7 @@ class PskbProductGroupsIssuesController < ApplicationController
   def create
     pg_issues_by_status = params["pgIssuesData"]
     all_pg_issues = pg_issues_by_status["0"] + pg_issues_by_status["1"] + pg_issues_by_status["2"]
-
+    issue_id = all_pg_issues[0]["issueId"]
     if !check_percentage(all_pg_issues)
       render json: {"error": "Сумма процентов должна равняться 100", "error_code": "0"}, status: :unprocessable_entity
       return
@@ -38,7 +38,7 @@ class PskbProductGroupsIssuesController < ApplicationController
     end
     puts "LOGI start"
 
-    send_mails(get_owners(all_pg_issues))
+    send_mails(get_owners(all_pg_issues), issue_id)
     render json: {"success": "good"}, status: 201
   end
 
@@ -56,7 +56,7 @@ class PskbProductGroupsIssuesController < ApplicationController
     return owners
   end
 
-  def send_mails(owners)
+  def send_mails(owners, issue_id)
     for owner in owners do
       Rails.logger.info("OWNER LOG")
       Rails.logger.info(owner)
