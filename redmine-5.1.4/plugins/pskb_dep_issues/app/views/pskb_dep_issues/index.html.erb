@@ -1,4 +1,27 @@
-<h2>PskbDepIssuesController#index</h2>
-<% @dep_issues.each do |obj| %>
-    <% obj %>
-<% end %>
+<h1>Подразделения</h1>
+
+<div class="actions">
+  <%= link_to "Добавить подразделение", new_pskb_dep_issue_path, class: "icon icon-add" %>
+</div>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Название</th>
+      <th>Владелец</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @data.each do |record| %>
+      <tr>
+        <td><%= record[0].name %></td>
+        <td><%= record[1].name %></td>
+        <td>
+          <%= link_to "Редактировать", edit_pskb_dep_issue_path(record[2]), class: "btn btn-warning" %>
+          <%= link_to "Удалить", pskb_dep_issue_path(record[2]), method: :delete, data: { confirm: "Вы уверены?" }, class: "btn btn-danger" %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

@@ -1,1 +1,9 @@
 <h2>PskbDepIssuesController#show</h2>
+
+<div>
+    <%= @dep_issue.id %>
+    <%= @dep_issue.dep_id %>
+    <%= @dep_issue.user_id %>
+</div>
+<%= delete_link pskb_dep_issue_path(@dep_issue)%>
+<%= link_to 'Редактировать', edit_pskb_dep_issue_path(@dep_issue) %>

@@ -2,6 +2,10 @@ class PskbDepIssuesController < ApplicationController
 
   def index
     @dep_issues = PskbDepIssue.all
+    @data = []
+    for dep_issue in @dep_issues do 
+      @data << [Department.find(dep_issue.dep_id), User.find(dep_issue.user_id), dep_issue]
+    end
   end
 
   def new
@@ -27,15 +31,22 @@ class PskbDepIssuesController < ApplicationController
 
     @dep_issue = PskbDepIssue.find(id)
     @dep_issue.destroy
-    redirect_to :index
+    redirect_to pskb_dep_issues_path
   end
 
   def edit
-    @dep_issue = PskbDepIssue.find(params(:id))
+    id = params[:id]
+    @dep_issue = PskbDepIssue.find(id)
+    @departments = Department.all
+    @users = User.all
   end
 
   def update
-    @dep_issue = PskbDepIssue.find(params(:id))
+    id = params[:id]
+
+    @dep_issue = PskbDepIssue.find(id)
+    @departments = Department.all
+    @users = User.all
 
     if @dep_issue.update(dep_issues_params)
       redirect_to @dep_issue
@@ -47,6 +58,6 @@ class PskbDepIssuesController < ApplicationController
   private
 
   def dep_issues_params
-    params.require(:pskb_dep_issues).permit(:dep_id, :user_id) 
+    params.permit(:dep_id, :user_id) 
   end
 end
