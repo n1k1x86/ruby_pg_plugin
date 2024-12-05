@@ -1,20 +1,18 @@
-<h2>PskbDepIssuesController#edit</h2>
-
-<h1>Edit Group</h1>
+<h2>
+  <%= link_to 'Подразделения', pskb_dep_issues_path %>
+  >> Редактировать
+</h2>
 
 <%= form_with model: @dep_issue, method: :put, url: pskb_dep_issue_path(@dep_issue), local: true do |form| %>
 
   <div>
     <%= form.label :user_id, 'Voter' %>
     <%= form.collection_select :user_id, @users, :id, :name, { prompt: 'Select Voter' }, selected: @dep_issue.user_id %>
-  </div>
-
-  <div>
     <%= form.label :dep_id, 'Department' %>
     <%= form.collection_select :dep_id, @departments, :id, :name, { prompt: 'Select Department' }, selected: @dep_issue.dep_id %>
   </div>
 
-  <div>
-    <%= form.submit 'Update Department' %>
+  <div style="margin: 10px 0px;">
+    <%= form.submit 'Изменить' %>
   </div>
 <% end %>

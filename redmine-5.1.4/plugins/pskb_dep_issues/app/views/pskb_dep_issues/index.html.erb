@@ -1,10 +1,10 @@
-<h1>Подразделения</h1>
-
-<div class="actions">
+<div class="contextual">
   <%= link_to "Добавить подразделение", new_pskb_dep_issue_path, class: "icon icon-add" %>
 </div>
 
-<table class="table">
+<h2>Подразделения</h2>
+
+<table class="list">
   <thead>
     <tr>
       <th>Название</th>
@@ -19,7 +19,7 @@
         <td><%= record[1].name %></td>
         <td>
           <%= link_to "Редактировать", edit_pskb_dep_issue_path(record[2]), class: "btn btn-warning" %>
-          <%= link_to "Удалить", pskb_dep_issue_path(record[2]), method: :delete, data: { confirm: "Вы уверены?" }, class: "btn btn-danger" %>
+          <%= link_to "Удалить", pskb_dep_issue_path(record[2]), method: :delete, data: { confirm: "Вы уверены?" }, class: "icon icon-del" %>
         </td>
       </tr>
     <% end %>

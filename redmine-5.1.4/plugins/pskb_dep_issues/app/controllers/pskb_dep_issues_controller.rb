@@ -1,4 +1,5 @@
 class PskbDepIssuesController < ApplicationController
+  layout 'admin'
 
   def index
     @dep_issues = PskbDepIssue.all
@@ -18,7 +19,7 @@ class PskbDepIssuesController < ApplicationController
     @dep_issue = PskbDepIssue.new(dep_issues_params)
     @dep_issue.save
 
-    redirect_to @dep_issue
+    redirect_to pskb_dep_issues_path
   end
 
   def show
@@ -49,7 +50,7 @@ class PskbDepIssuesController < ApplicationController
     @users = User.all
 
     if @dep_issue.update(dep_issues_params)
-      redirect_to @dep_issue
+      redirect_to pskb_dep_issues_path
     else 
       render :edit
     end
@@ -58,6 +59,6 @@ class PskbDepIssuesController < ApplicationController
   private
 
   def dep_issues_params
-    params.permit(:dep_id, :user_id) 
+    params.require(:pskb_dep_issue).permit(:dep_id, :user_id) 
   end
 end
