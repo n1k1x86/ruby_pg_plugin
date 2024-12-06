@@ -60,7 +60,7 @@ class PskbProductGroupsIssuesController < ApplicationController
     for owner in owners do
       Rails.logger.info("OWNER LOG")
       Rails.logger.info(owner)
-      Mailer.send_msg_to_pg_owners(owner, "Продуктовые группы", "Вы были добавлены в долю")
+      Mailer.deliver_product_groups_added(owner, "Продуктовые группы", "Вы были добавлены в долю", Issue.find(issue_id))
     end
   end
 
