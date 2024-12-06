@@ -1,3 +1,4 @@
+
 Redmine::Plugin.register :pskb_dep_issues do
   name 'Pskb Dep Issues plugin'
   author 'Moiseev Nikita'
@@ -11,3 +12,4 @@ Redmine::Plugin.register :pskb_dep_issues do
 end
 
 require File.dirname(__FILE__) + '/lib/pskb_dep_issues'
+require File.dirname(__FILE__) + '/lib/pskb_dep_issues/hooks'

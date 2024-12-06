@@ -1,0 +1,11 @@
+<p>
+  <label for="department_id">Подразделение</label>
+  <select name="issue[department_id]" id="department_id">
+    <option value="">Выберите подразделение</option>
+    <% Department.all.each do |department| %>
+      <option value="<%= department.id %>" <%= 'selected' if department.id == @issue.department_id %> >
+        <%= department.name %>
+      </option>
+    <% end %>
+  </select>
+</p>
