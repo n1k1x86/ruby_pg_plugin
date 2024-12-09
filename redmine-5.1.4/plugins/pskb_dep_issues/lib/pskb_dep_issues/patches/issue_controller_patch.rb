@@ -13,6 +13,8 @@ module PskbDepIssues
 
             if User.current.allowed_to?(:approve_issue_perm, @project)
               Rails.logger.info "Permission check passed"
+              @issue.approved_owner = true
+              @issue.save
               redirect_to @issue
             else
               Rails.logger.info "Permission check failed"
@@ -26,6 +28,8 @@ module PskbDepIssues
 
             if User.current.allowed_to?(:approve_issue_perm, @project)
               Rails.logger.info "Permission check passed"
+              @issue.approved_owner = false
+              @issue.save
               redirect_to @issue
             else
               Rails.logger.info "Permission check failed"
