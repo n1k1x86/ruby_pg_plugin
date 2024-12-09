@@ -3,4 +3,16 @@
         <div class="label">Подразделение: </div>
         <div class="value"><%= Department.find(@issue.department_id).name %></div>
     </div>
+    <% if @issue.approved_owner.nil? %>
+        <div>
+            <%= link_to 'Согласовать', approve_issue_issue_path(@issue), method: :post %>      
+            <%= link_to 'Отклонить', reject_issue_issue_path(@issue), method: :post %>
+        </div>
+        
+    <% elsif  @issue.approved_owner == true %>
+        <p>Согласовано руководителем подразделения</p>
+    <% else %>
+        <p>Не согласовано руководителем подразделения</p>
+    <% end %>
+    <div></div>
 </p>

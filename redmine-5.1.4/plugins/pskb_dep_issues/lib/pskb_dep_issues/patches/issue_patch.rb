@@ -4,6 +4,7 @@ module PskbDepIssues
       def self.included(base)
         base.class_eval do
           belongs_to :department
+          attribute :approved_owner
 
           validates :department_id, presence: true
         end
