@@ -4,40 +4,30 @@ module PskbDepIssues
       def self.prepended(base)
         base.class_eval do
           before_action :save_dep_id, only: [:create, :update]
-          skip_before_action :authorize, only: [:approve_issue, :reject_issue]
+          before_action :find_project, only: [:approve_issue, :reject_issue]
+          before_action :authorize, only: [:approve_issue, :reject_issue]
           after_action :send_mail_to_dep_owner, only: [:create, :update]
 
           def approve_issue
             @issue = Issue.find(params[:id])
-            @project = Project.find(@issue.project_id)
-
-            if User.current.allowed_to?(:approve_issue_perm, @project)
-              Rails.logger.info "Permission check passed"
-              @issue.approved_owner = true
-              @issue.save
-              redirect_to @issue
-            else
-              Rails.logger.info "Permission check failed"
-              render plain: "Доступ запрещен", status: :forbidden
-            end
+            @issue.approved_owner = true
+            @issue.save 
+            redirect_to @issue
           end
 
           def reject_issue
             @issue = Issue.find(params[:id])
-            @project = Project.find(@issue.project_id)
-
-            if User.current.allowed_to?(:approve_issue_perm, @project)
-              Rails.logger.info "Permission check passed"
-              @issue.approved_owner = false
-              @issue.save
-              redirect_to @issue
-            else
-              Rails.logger.info "Permission check failed"
-              render plain: "Доступ запрещен", status: :forbidden
-            end
+            @issue.approved_owner = false
+            @issue.save
+            redirect_to @issue
           end
 
           private
+
+          def find_project 
+            @issue = Issue.find(params[:id])
+            @project = Project.find(@issue.project_id)
+          end
 
           def save_dep_id
             @issue.department_id = params[:issue][:department_id]

@@ -1,4 +1,3 @@
-
 Redmine::Plugin.register :pskb_dep_issues do
   name 'Pskb Dep Issues plugin'
   author 'Moiseev Nikita'
