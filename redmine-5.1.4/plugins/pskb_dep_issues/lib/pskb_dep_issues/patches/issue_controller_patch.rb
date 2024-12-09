@@ -16,10 +16,10 @@ module PskbDepIssues
           end
 
           def reject_issue
-            @issue = Issue.find(params[:id])
-            @issue.approved_owner = false
-            @issue.save
-            redirect_to @issue
+            # @issue = Issue.find(params[:id])
+            # @issue.approved_owner = false
+            # @issue.save
+            render json: {"success": "good"}, status: 200
           end
 
           private

@@ -84,6 +84,17 @@
         background-color: #f9f9f9;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
+
+    #notify {
+        color: red;
+        font-size: 0.9em;
+        display: none;
+    }
+
+    button:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+    }
 </style>
 
 <div class="attribute">
@@ -100,9 +111,10 @@
                     </div>
                     <div id="reject-comment-container">
                         <textarea id="reject-comment" class="reject-comment" placeholder="Оставьте ваш комментарий"></textarea>
+                        <div id="notify">Комментарий должен быть больше 5 символов!</div>
                     </div>
                     <div class="reject-actions">
-                        <button class="reject-btn">Отклонить</button>
+                        <button id="reject-issue-btn" class="reject-btn">Отклонить</button>
                         <button id="reject-close-btn" class="reject-close-btn">Отменить</button>
                     </div>
                 </div>
@@ -123,14 +135,68 @@
 <script>
     const modalReject = document.getElementById("reject-modal");
     const openModalReject = document.getElementById("openRejectModal");
-    const closeModalReject = document.getElementById("reject-close-btn")
+    const closeModalReject = document.getElementById("reject-close-btn");
+    const notify = document.getElementById('notify');
+    var commentArea = document.getElementById("reject-comment");
 
     openModalReject.addEventListener('click', function() {
         modalReject.style.display = "block";
     })
 
     closeModalReject.addEventListener('click', function() {
+        commentArea.value = '';
         modalReject.style.display = "none";
     })
 
+    var rejectIssueBtn = document.getElementById("reject-issue-btn");
+
+    function sendComment(comment) {
+        const issueObj = <%= @issue.to_json.html_safe %>
+
+        const xhr = new XMLHttpRequest()
+        xhr.open('POST', `/issues/${issueObj.id}/reject_issue`, false);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        xhr.setRequestHeader('X-CSRF-Token', csrfToken);
+
+        const commentJson = {
+            comment: comment
+        };
+
+        xhr.send(JSON.stringify(commentJson));
+
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                window.onbeforeunload = null;
+                location.reload();
+            } else {
+                const response = JSON.parse(xhr.responseText);
+                alert(response.error);
+            }
+      }
+    }
+
+    function rejectIssue(event) {
+        const rejectComment = commentArea.value;
+        commentArea.value = '';
+        sendComment(rejectComment);
+    }
+
+    rejectIssueBtn.addEventListener('click', rejectIssue);
+
+    function validateTextarea() {
+        const text = commentArea.value.trim();
+
+        if (text === "" || text.length <= 5) {
+            rejectIssueBtn.disabled = true;
+            notify.style.display = "block";
+        } else {
+            rejectIssueBtn.disabled = false;
+            notify.style.display = "none";
+        }
+    }
+
+    commentArea.addEventListener('input', validateTextarea);
+    validateTextarea()
 </script>
