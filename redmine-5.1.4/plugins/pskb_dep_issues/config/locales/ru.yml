@@ -1,0 +1,11 @@
+ru:
+  activerecord:
+    attributes:
+      issue:
+        department_id: "Подразделение"
+    errors:
+      models:
+        issue:
+          attributes:
+            department_id:
+              blank: "не может быть пустым"

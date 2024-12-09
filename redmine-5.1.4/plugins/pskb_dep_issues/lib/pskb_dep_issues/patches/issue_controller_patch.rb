@@ -34,7 +34,9 @@ module PskbDepIssues
           end
 
           def send_mail_to_dep_owner
-            Mailer.deliver_department_set(User.find(PskbDepIssue.find_by(dep_id: @issue.department_id).user_id), "Подразделения", @issue)
+            if !@issue.errors.any?
+              Mailer.deliver_department_set(User.find(PskbDepIssue.find_by(dep_id: @issue.department_id).user_id), "Подразделения", @issue)
+            end
           end
         end
       end

@@ -3,16 +3,16 @@
         <div class="label">Подразделение: </div>
         <div class="value"><%= Department.find(@issue.department_id).name %></div>
     </div>
-    <% if @issue.approved_owner.nil? %>
+    <% if @issue.approved_owner.nil? && (User.current.admin? || User.current == User.find(PskbDepIssue.find_by(dep_id: @issue.department_id).user_id))%>
         <div>
             <%= link_to 'Согласовать', approve_issue_issue_path(@issue), method: :post %>      
             <%= link_to 'Отклонить', reject_issue_issue_path(@issue), method: :post %>
         </div>
-        
     <% elsif  @issue.approved_owner == true %>
         <p>Согласовано руководителем подразделения</p>
-    <% else %>
+    <% elsif @issue.approved_owner == false %>
         <p>Не согласовано руководителем подразделения</p>
+    <% else %>
     <% end %>
     <div></div>
 </p>
