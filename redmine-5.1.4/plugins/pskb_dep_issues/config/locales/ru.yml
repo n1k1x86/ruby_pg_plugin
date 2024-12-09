@@ -2,7 +2,7 @@ ru:
   activerecord:
     attributes:
       issue:
-        department_id: "Подразделение"
+        department_id: "Подразделение-инициатор"
     errors:
       models:
         issue:

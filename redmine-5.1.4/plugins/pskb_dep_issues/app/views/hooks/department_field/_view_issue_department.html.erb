@@ -1,18 +1,136 @@
-<p>
-    <div id="department-id" class="attribute">
-        <div class="label">Подразделение: </div>
+<style>
+    .reject-modal {
+        display: none;
+        position: fixed;
+        background: #ffffff85;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+  
+    .reject-modal-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px 20px 0px 20px;
+        border: 1px solid #888;
+        border-radius: 10px;
+        width: 50%;
+    }
+
+    #neg-container {
+        margin: 10px 0px 10px 0px;
+    }
+
+    .reject-btn{
+        color: white !important;
+        font-size: 2.2vh;
+        background: red;
+        cursor: pointer;
+    }
+
+    .approve-btn {
+        background: #34b234
+    }
+
+    .approve-btn a {
+        color: white !important;
+        font-size: 2.2vh;
+    }
+    .approve-btn a:link, .reject-btn a:link{
+        text-decoration: none;
+    }
+    .approve-btn a:hover, .reject-btn a:hover{
+        text-decoration: none;
+    }
+    .approve-btn a:visited, .reject-btn a:visited{
+        text-decoration: none;
+    }
+    .approve-btn a:active, .reject-btn a:active{
+        text-decoration: none;
+    }
+
+    .reject-close-btn {
+        color: black;
+        font-size: 2.2vh;
+        border-size: 1000px;
+        margin-top: 0px;
+    }
+    .reject-close-btn:hover,
+    .reject-close-btn:focus {
+        color: #aaa;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    #reject-comment-container {
+        margin: 0 auto;
+    }
+
+    .reject-actions {
+        margin: 10px 10px 10px 0px;
+    }
+
+    .reject-comment {
+        width: 100%;
+        height: 100%;
+        padding: 20px;
+        border: 1px solid #ddd;
+        resize: none;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+</style>
+
+<div class="attribute">
+    <div id="department-id">
+        <div class="label">Подразделение-инициатор: </div>
         <div class="value"><%= Department.find(@issue.department_id).name %></div>
     </div>
-    <% if @issue.approved_owner.nil? && (User.current.admin? || User.current == User.find(PskbDepIssue.find_by(dep_id: @issue.department_id).user_id))%>
-        <div>
-            <%= link_to 'Согласовать', approve_issue_issue_path(@issue), method: :post %>      
-            <%= link_to 'Отклонить', reject_issue_issue_path(@issue), method: :post %>
-        </div>
-    <% elsif  @issue.approved_owner == true %>
-        <p>Согласовано руководителем подразделения</p>
-    <% elsif @issue.approved_owner == false %>
-        <p>Не согласовано руководителем подразделения</p>
-    <% else %>
-    <% end %>
-    <div></div>
-</p>
+    <div id="neg-container">
+        <% if @issue.approved_owner.nil? && (User.current.admin? || User.current == User.find(PskbDepIssue.find_by(dep_id: @issue.department_id).user_id))%>
+            <div id="reject-modal" class="reject-modal" style="display: none;">
+                <div id="modal-content" class="reject-modal-content">
+                    <div>
+                        <h2>Причина отклонения</h2>
+                    </div>
+                    <div id="reject-comment-container">
+                        <textarea id="reject-comment" class="reject-comment" placeholder="Оставьте ваш комментарий"></textarea>
+                    </div>
+                    <div class="reject-actions">
+                        <button class="reject-btn">Отклонить</button>
+                        <button id="reject-close-btn" class="reject-close-btn">Отменить</button>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <button class="approve-btn"><%= link_to 'Согласовать', approve_issue_issue_path(@issue), method: :post %></button>
+                <button id="openRejectModal" class="reject-btn">Отклонить</button>     
+            </div>
+        <% elsif  @issue.approved_owner == true %>
+            <p>Согласовано руководителем подразделения</p>
+        <% elsif @issue.approved_owner == false %>
+            <p>Не согласовано руководителем подразделения</p>
+        <% else %>
+        <% end %>
+    </div>
+</div>
+
+<script>
+    const modalReject = document.getElementById("reject-modal");
+    const openModalReject = document.getElementById("openRejectModal");
+    const closeModalReject = document.getElementById("reject-close-btn")
+
+    openModalReject.addEventListener('click', function() {
+        modalReject.style.display = "block";
+    })
+
+    closeModalReject.addEventListener('click', function() {
+        modalReject.style.display = "none";
+    })
+
+</script>
