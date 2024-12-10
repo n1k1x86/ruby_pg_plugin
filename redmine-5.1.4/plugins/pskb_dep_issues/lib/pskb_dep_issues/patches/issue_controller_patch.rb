@@ -7,16 +7,21 @@ module PskbDepIssues
           before_action :find_project, only: [:approve_issue, :reject_issue]
           before_action :authorize, only: [:approve_issue, :reject_issue]
           after_action :send_mail_to_dep_owner, only: [:create, :update]
+          after_action :send_mail_rejection, only: [:reject_issue]
 
           def approve_issue
             @issue = Issue.find(params[:id])
-            @issue.approved_owner = true
-            @issue.save 
+            @dep_user = User.current
+            # @issue.approved_owner = true
+            # @issue.save 
+            send_mail_approve
             redirect_to @issue
           end
 
           def reject_issue
-            # @issue = Issue.find(params[:id])
+            @issue = Issue.find(params[:id])
+            @comment = params[:comment]
+            @dep_user = User.current
             # @issue.approved_owner = false
             # @issue.save
             render json: {"success": "good"}, status: 200
@@ -35,8 +40,22 @@ module PskbDepIssues
 
           def send_mail_to_dep_owner
             if !@issue.errors.any?
-              Mailer.deliver_department_set(User.find(PskbDepIssue.find_by(dep_id: @issue.department_id).user_id), "Подразделения", @issue)
+              subject = "Подразделения"
+              user = User.find(PskbDepIssue.find_by(dep_id: @issue.department_id).user_id)
+              Mailer.deliver_department_set(user, subject, @issue)
             end
+          end
+
+          def send_mail_rejection
+            subject = "Подразделения"
+            user = User.find(@issue.author_id)
+            Mailer.deliver_department_reject_issue(user, subject, @issue, @comment, @dep_user)
+          end
+
+          def send_mail_approve 
+            subject = "Подразделения"
+            user = User.find(@issue.author_id)
+            Mailer.deliver_department_approve_issue(user, subject, @issue, nil, @dep_user)
           end
         end
       end
