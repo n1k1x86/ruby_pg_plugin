@@ -12,8 +12,8 @@ module PskbDepIssues
           def approve_issue
             @issue = Issue.find(params[:id])
             @dep_user = User.current
-            # @issue.approved_owner = true
-            # @issue.save 
+            @issue.approved_owner = true
+            @issue.save 
             send_mail_approve
             redirect_to @issue
           end
@@ -22,8 +22,12 @@ module PskbDepIssues
             @issue = Issue.find(params[:id])
             @comment = params[:comment]
             @dep_user = User.current
-            # @issue.approved_owner = false
-            # @issue.save
+
+            @journal = Journal.new(user_id: @dep_user.id, journalized_id: @issue.id, journalized_type: "Issue", notes: @comment)
+            @journal.save
+
+            @issue.approved_owner = false
+            @issue.save
             render json: {"success": "good"}, status: 200
           end
 
