@@ -1,0 +1,44 @@
+<style>
+    #dep-neg-notify {
+        background-color: #d2db20 ;
+        text-align: center;
+        font-size: 20px;
+        color: white;
+        border-radius: 6px;
+        padding-top: 6px;
+        padding-bottom: 6px;
+        margin-bottom: 10px;
+    }
+</style>
+
+<div id='dep-neg-notify'>
+    <p>Задача в процессе согласования подразделением-инициатором</p> 
+</div>
+
+<script>
+    function disableIssueEvent() {
+        let contElems = document.getElementsByClassName('contextual');
+        let contElemsArray = Array.from(contElems);
+        contElemsArray.forEach(function(elem){
+            elem.style.display = "none";
+        })
+
+        let actionsDiv = document.getElementsByClassName('actions');
+        let actionsDivArray = Array.from(actionsDiv);
+        actionsDivArray.forEach(function(elem){
+            elem.style.display = "none";
+        })
+
+        let addNotesForm = document.getElementById('add-notes-form');
+        let parentDiv = null;
+        if (addNotesForm != null) {
+            parentDiv = addNotesForm.closest('div');
+        }
+
+        if (parentDiv != null) {
+            parentDiv.style.display = "none";
+        } 
+    }
+
+    document.addEventListener('DOMContentLoaded', disableIssueEvent);
+</script>

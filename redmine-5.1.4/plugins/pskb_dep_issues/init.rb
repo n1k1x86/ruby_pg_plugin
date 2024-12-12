@@ -12,6 +12,11 @@ Redmine::Plugin.register :pskb_dep_issues do
     menu.push :pskb_dep_issues, { controller: 'pskb_dep_issues', action: 'index' },
     caption: 'Подразделения' 
   end
+
+  ISSUES_NEGOTIATION_STAT = 2 # id статуса 'согласования' из issues_status
+  ISSUE_CLOSED_STAT = 3 # id статуса 'закрыто' из issues_status
+  ISSUE_IN_WORK_STAT = 1 # id статуса 'в работе' из issues_status
+  ISSUE_NEW_STAT = 4 # id статуса 'новая' из issues_status
 end
 
 require File.dirname(__FILE__) + '/lib/pskb_dep_issues'

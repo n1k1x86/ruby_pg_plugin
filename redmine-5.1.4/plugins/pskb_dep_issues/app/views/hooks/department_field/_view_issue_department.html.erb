@@ -1,5 +1,34 @@
-<% if @issue.tracker_id == 1%>
+<% if @issue.tracker_id == 1 %>
 <style>
+
+    .department-init {
+        display: flex;
+        align-items: center;
+        justify-content: left;
+        gap: 15px;
+    }
+
+    #approved_text {
+        color: #13ea4e;
+    }
+
+    #reject_text {
+        color: #ea1313;
+    }
+
+    #department-id {
+        display: flex; /* Выстраивает "label" и "value" в одну строку, если нужно */
+        gap: 15px; /* Расстояние между "label" и "value" */
+    }
+
+    #department-id .label {
+        font-weight: bold
+    }
+
+    #neg-container button {
+        margin-left: 5px; /* Расстояние между кнопками */
+    }
+
     .reject-modal {
         display: none;
         position: fixed;
@@ -28,7 +57,7 @@
 
     .reject-btn{
         color: white !important;
-        font-size: 2.2vh;
+        font-size: 15px;
         background: red;
         cursor: pointer;
     }
@@ -39,7 +68,7 @@
 
     .approve-btn a {
         color: white !important;
-        font-size: 2.2vh;
+        font-size: 15px;
     }
     .approve-btn a:link, .reject-btn a:link{
         text-decoration: none;
@@ -56,7 +85,7 @@
 
     .reject-close-btn {
         color: black;
-        font-size: 2.2vh;
+        font-size: 15px;
         border-size: 1000px;
         margin-top: 0px;
     }
@@ -97,9 +126,9 @@
         cursor: not-allowed;
     }
 </style>
-
-<div class="attribute">
-    <div id="department-id">
+<hr>
+<div class="department-init">
+    <div id="department-id" class="department-name">
         <div class="label">Подразделение-инициатор: </div>
         <% if !PskbDepIssue.find_by(id: @issue.department_id).nil? %>
             <div class="value"><%= Department.find(PskbDepIssue.find(@issue.department_id).dep_id).name %></div>
@@ -107,39 +136,40 @@
             <div class="value">Не выбрано</div>
         <% end %>
     </div>
-        <% if !PskbDepIssue.find_by(id: @issue.department_id).nil? %>
-        <div id="neg-container">
-        <% if @issue.approved_owner.nil? && (User.current.admin? || User.current == User.find(PskbDepIssue.find_by(dep_id: @issue.department_id).user_id))%>
-            <div id="reject-modal" class="reject-modal" style="display: none;">
-                <div id="modal-content" class="reject-modal-content">
-                    <div>
-                        <h2>Причина отклонения</h2>
-                    </div>
-                    <div id="reject-comment-container">
-                        <textarea id="reject-comment" class="reject-comment" placeholder="Оставьте ваш комментарий"></textarea>
-                        <div id="notify">Комментарий должен быть больше 5 символов!</div>
-                    </div>
-                    <div class="reject-actions">
-                        <button id="reject-issue-btn" class="reject-btn">Отклонить</button>
-                        <button id="reject-close-btn" class="reject-close-btn">Отменить</button>
-                    </div>
+    <% if !PskbDepIssue.find_by(id: @issue.department_id).nil?%>
+    <div id="neg-container">
+    <% if @issue.status_id == ISSUES_NEGOTIATION_STAT && @issue.approved_owner.nil? && (User.current.admin? || User.current == User.find(PskbDepIssue.find_by(dep_id: @issue.department_id).user_id))%>
+        <div id="reject-modal" class="reject-modal" style="display: none;">
+            <div id="modal-content" class="reject-modal-content">
+                <div>
+                    <h2>Причина отклонения</h2>
+                </div>
+                <div id="reject-comment-container">
+                    <textarea id="reject-comment" class="reject-comment" placeholder="Оставьте ваш комментарий"></textarea>
+                    <div id="notify">Комментарий должен быть больше 5 символов!</div>
+                </div>
+                <div class="reject-actions">
+                    <button id="reject-issue-btn" class="reject-btn">Отклонить</button>
+                    <button id="reject-close-btn" class="reject-close-btn">Отменить</button>
                 </div>
             </div>
-            <div>
-                <button class="approve-btn"><%= link_to 'Согласовать', approve_issue_issue_path(@issue), method: :post %></button>
-                <button id="openRejectModal" class="reject-btn">Отклонить</button>     
-            </div>
-        <% elsif  @issue.approved_owner == true %>
-            <p>Согласовано руководителем подразделения</p>
-        <% elsif @issue.approved_owner == false %>
-            <p>Не согласовано руководителем подразделения</p>
-        <% else %>
-        <% end %>
         </div>
-        <% else %>
-        <div id="neg-container"><br/></div>
-        <% end %>
+        <div class="actions-dep-btns">
+            <button class="approve-btn"><%= link_to 'Согласовать', approve_issue_issue_path(@issue), method: :post %></button>
+            <button id="openRejectModal" class="reject-btn">Отклонить</button>     
+        </div>
+    <% elsif  @issue.approved_owner == true %>
+        <div id="approved_text">Согласовано руководителем подразделения</div>
+    <% elsif @issue.approved_owner == false %>
+        <div id="reject_text">Не согласовано руководителем подразделения</div>
+    <% else %>
+    <% end %>
+    </div>
+    <% else %>
+    <div id="neg-container"><br/></div>
+    <% end %>
 </div>
+<hr>
 
 <script>
     const modalReject = document.getElementById("reject-modal");

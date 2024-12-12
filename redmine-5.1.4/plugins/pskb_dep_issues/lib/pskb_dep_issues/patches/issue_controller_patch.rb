@@ -6,6 +6,7 @@ module PskbDepIssues
           before_action :save_dep_id, only: [:create, :update]
           before_action :find_project, only: [:approve_issue, :reject_issue]
           before_action :authorize, only: [:approve_issue, :reject_issue]
+
           after_action :send_mail_to_dep_owner, only: [:create, :update]
           after_action :send_mail_rejection, only: [:reject_issue]
 
@@ -13,6 +14,7 @@ module PskbDepIssues
             @issue = Issue.find(params[:id])
             @dep_user = User.current
             @issue.approved_owner = true
+            @issue.status_id = ISSUE_NEW_STAT
             @issue.save 
             send_mail_approve
             redirect_to @issue
@@ -25,9 +27,14 @@ module PskbDepIssues
 
             @journal = Journal.new(user_id: @dep_user.id, journalized_id: @issue.id, journalized_type: "Issue", notes: @comment)
             @journal.save
+            
+            reject_reason = "Отказ от реализации"
+            @reject_realize = Journal.new(user_id: @dep_user.id, journalized_id: @issue.id, journalized_type: "Issue", notes: reject_reason)
+            @reject_realize.save
 
-            # @issue.approved_owner = false
-            # @issue.save
+            @issue.approved_owner = false
+            @issue.status_id = ISSUE_CLOSED_STAT
+            @issue.save
             render json: {"success": "good"}, status: 200
           end
 
