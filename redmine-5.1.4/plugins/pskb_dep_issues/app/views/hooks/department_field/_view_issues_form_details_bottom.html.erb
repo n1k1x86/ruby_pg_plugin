@@ -1,11 +1,13 @@
+<% if @issue.tracker_id == 1 %>
 <p>
   <label for="department_id">Подразделение-инициатор</label>
   <select name="issue[department_id]" id="department_id">
     <option value="">Выберите подразделение</option>
-    <% Department.all.each do |department| %>
+    <% PskbDepIssue.all.each do |department| %>
       <option value="<%= department.id %>" <%= 'selected' if department.id == @issue.department_id %> >
-        <%= department.name %>
+        <%= Department.find(department.dep_id).name %>
       </option>
     <% end %>
   </select>
 </p>
+<% end %>

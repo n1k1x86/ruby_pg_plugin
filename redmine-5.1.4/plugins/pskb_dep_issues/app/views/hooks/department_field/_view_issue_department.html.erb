@@ -1,3 +1,4 @@
+<% if @issue.tracker_id == 1 %>
 <style>
     .reject-modal {
         display: none;
@@ -100,7 +101,7 @@
 <div class="attribute">
     <div id="department-id">
         <div class="label">Подразделение-инициатор: </div>
-        <div class="value"><%= Department.find(@issue.department_id).name %></div>
+        <div class="value"><%= Department.find(PskbDepIssue.find(@issue.department_id).dep_id).name %></div>
     </div>
     <div id="neg-container">
         <% if @issue.approved_owner.nil? && (User.current.admin? || User.current == User.find(PskbDepIssue.find_by(dep_id: @issue.department_id).user_id))%>
@@ -201,3 +202,4 @@
     commentArea.addEventListener('input', validateTextarea);
     validateTextarea()
 </script>
+<% end %>

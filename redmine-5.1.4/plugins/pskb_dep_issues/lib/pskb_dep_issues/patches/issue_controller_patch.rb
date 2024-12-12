@@ -26,8 +26,8 @@ module PskbDepIssues
             @journal = Journal.new(user_id: @dep_user.id, journalized_id: @issue.id, journalized_type: "Issue", notes: @comment)
             @journal.save
 
-            @issue.approved_owner = false
-            @issue.save
+            # @issue.approved_owner = false
+            # @issue.save
             render json: {"success": "good"}, status: 200
           end
 
@@ -43,9 +43,9 @@ module PskbDepIssues
           end
 
           def send_mail_to_dep_owner
-            if !@issue.errors.any?
+            if !@issue.errors.any? && @issue.tracker_id == 1
               subject = "Подразделения"
-              user = User.find(PskbDepIssue.find_by(dep_id: @issue.department_id).user_id)
+              user = User.find(PskbDepIssue.find(@issue.department_id).user_id)
               Mailer.deliver_department_set(user, subject, @issue)
             end
           end

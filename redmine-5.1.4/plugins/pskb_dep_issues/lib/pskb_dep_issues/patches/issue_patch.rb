@@ -3,10 +3,22 @@ module PskbDepIssues
     module IssuePatch
       def self.included(base)
         base.class_eval do
-          belongs_to :department
+          belongs_to :pskb_dep_issues
           attribute :approved_owner
 
-          validates :department_id, presence: true
+          validate :is_department_id_null, if: :tracker_23?
+          
+          private
+
+          def is_department_id_null 
+            if department_id.blank?
+              errors.add(:department_id, "must be present when tracker_id is 23")
+            end 
+          end
+
+          def tracker_23? 
+            tracker_id == 1
+          end
         end
       end
     end
