@@ -12,7 +12,7 @@ module PskbDepIssues
 
           def is_department_id_null 
             if department_id.blank?
-              errors.add(:department_id, "must be present when tracker_id is 23")
+              errors.add(:department_id, "должно быть заполнено")
             end 
           end
 

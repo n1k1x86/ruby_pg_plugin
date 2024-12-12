@@ -1,4 +1,4 @@
-<% if @issue.tracker_id == 1 %>
+<% if @issue.tracker_id == 1%>
 <style>
     .reject-modal {
         display: none;
@@ -101,9 +101,14 @@
 <div class="attribute">
     <div id="department-id">
         <div class="label">Подразделение-инициатор: </div>
-        <div class="value"><%= Department.find(PskbDepIssue.find(@issue.department_id).dep_id).name %></div>
+        <% if !PskbDepIssue.find_by(id: @issue.department_id).nil? %>
+            <div class="value"><%= Department.find(PskbDepIssue.find(@issue.department_id).dep_id).name %></div>
+        <% else %>
+            <div class="value">Не выбрано</div>
+        <% end %>
     </div>
-    <div id="neg-container">
+        <% if !PskbDepIssue.find_by(id: @issue.department_id).nil? %>
+        <div id="neg-container">
         <% if @issue.approved_owner.nil? && (User.current.admin? || User.current == User.find(PskbDepIssue.find_by(dep_id: @issue.department_id).user_id))%>
             <div id="reject-modal" class="reject-modal" style="display: none;">
                 <div id="modal-content" class="reject-modal-content">
@@ -130,7 +135,10 @@
             <p>Не согласовано руководителем подразделения</p>
         <% else %>
         <% end %>
-    </div>
+        </div>
+        <% else %>
+        <div id="neg-container"><br/></div>
+        <% end %>
 </div>
 
 <script>
