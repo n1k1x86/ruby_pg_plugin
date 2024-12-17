@@ -14,6 +14,7 @@
     <p>Не заполнены продуктовые группы! Для продолжения работы над задачей, укажите продуктовые группы!</p> 
 </div>
 
+<% if !User.current.admin? %>
 <script>
     function disableIssueEvent() {
         let contElems = document.getElementsByClassName('contextual');
@@ -41,3 +42,4 @@
 
     document.addEventListener('DOMContentLoaded', disableIssueEvent);
 </script>
+<% end %>
