@@ -1,0 +1,18 @@
+<h2>
+  <%= link_to 'Типы объектов PSKB', pskb_obj_type_index_path %>
+  >> Создать
+</h2>
+<%= form_with(model: @new_obj_type, url: pskb_obj_type_index_path) do |form| %>
+
+  <div>
+    <%= form.label :name, 'Название' %>
+    <%= form.text_field :name %>
+
+    <%= form.label :description, 'Описание' %>
+    <%= form.text_field :description %>
+  </div>
+
+  <div style="margin: 10px 0px;">
+    <%= form.submit 'Создать' %>
+  </div>
+<% end %>

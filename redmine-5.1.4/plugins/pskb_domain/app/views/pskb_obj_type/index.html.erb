@@ -1,0 +1,27 @@
+<div class="contextual">
+  <%= link_to "Добавить тип объекта PSKB", new_pskb_obj_type_path, class: "icon icon-add" %>
+</div>
+
+<h2>Типы объектов PSKB</h2>
+
+<table class="list">
+  <thead>
+    <tr>
+      <th>Название</th>
+      <th>Описание</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @obj_types.each do |record| %>
+      <tr>
+        <td><%= record.name %></td>
+        <td><%= record.description %></td>
+        <td>
+          <%= link_to "Редактировать", edit_pskb_obj_type_path(record), class: "btn btn-warning" %>
+          <%= link_to "Удалить", pskb_obj_type_path(record), method: :delete, data: { confirm: "Вы уверены?" }, class: "icon icon-del" %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
