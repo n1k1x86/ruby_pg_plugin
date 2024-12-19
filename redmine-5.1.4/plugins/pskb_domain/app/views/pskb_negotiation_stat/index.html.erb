@@ -1,1 +1,25 @@
-<h2>PskbNegotiationStatController#index</h2>
+<div class="contextual">
+  <%= link_to "Добавить статус согласования", new_pskb_negotiation_stat_path, class: "icon icon-add" %>
+</div>
+
+<h2>Статусы согласований</h2>
+
+<table class="list">
+  <thead>
+    <tr>
+      <th>Название</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @pskb_neg_stats.each do |record| %>
+      <tr>
+        <td><%= record.name %></td>
+        <td>
+          <%= link_to "Редактировать", edit_pskb_negotiation_stat_path(record), class: "btn btn-warning" %>
+          <%= link_to "Удалить", pskb_negotiation_stat_path(record), method: :delete, data: { confirm: "Вы уверены?" }, class: "icon icon-del" %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

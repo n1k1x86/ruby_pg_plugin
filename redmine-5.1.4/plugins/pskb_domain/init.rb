@@ -14,8 +14,13 @@ Redmine::Plugin.register :pskb_domain do
   }
 
   Redmine::MenuManager.map :admin_menu do |menu|
-    menu.push :pskb_domain, { controller: 'pskb_obj_type', action: 'index' },
-    caption: 'Типы объектов PSKB'
+    menu.push :pskb_obj_type, { controller: 'pskb_obj_type', action: 'index' },
+    caption: 'Типы объектов PSKB',
+    html: { class: 'icon icon-projects projects' }
+
+    menu.push :pskb_negotiation_stat, { controller: 'pskb_negotiation_stat', action: 'index' },
+    caption: 'Статусы согласований',
+    html: { class: 'icon icon-issue-edit issue-statuses' }
   end
 
 end

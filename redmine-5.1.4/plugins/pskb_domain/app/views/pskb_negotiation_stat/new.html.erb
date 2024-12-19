@@ -1,1 +1,15 @@
-<h2>PskbNegotiationStatController#new</h2>
+<h2>
+  <%= link_to 'Статусы согласований', pskb_negotiation_stat_index_path %>
+  >> Создать
+</h2>
+<%= form_with(model: @new_neg_stat, url: pskb_negotiation_stat_index_path) do |form| %>
+
+  <div>
+    <%= form.label :name, 'Название' %>
+    <%= form.text_field :name %>
+  </div>
+
+  <div style="margin: 10px 0px;">
+    <%= form.submit 'Создать' %>
+  </div>
+<% end %>

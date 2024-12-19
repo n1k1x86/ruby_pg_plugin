@@ -1,1 +1,16 @@
-<h2>PskbNegotiationStatController#edit</h2>
+<h2>
+  <%= link_to 'Статусы согласований', pskb_negotiation_stat_index_path %>
+  >> Редактировать
+</h2>
+
+<%= form_with model: @pskb_neg_stat, method: :put, url: pskb_negotiation_stat_path(@pskb_neg_stat), local: true do |form| %>
+
+  <div>
+    <%= form.label :name, 'Name' %>
+    <%= form.text_field :name %>
+  </div>
+
+  <div style="margin: 10px 0px;">
+    <%= form.submit 'Изменить' %>
+  </div>
+<% end %>
