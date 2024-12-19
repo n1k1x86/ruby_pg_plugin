@@ -1,4 +1,6 @@
 class PskbObjTypeController < ApplicationController
+  rescue_from ActiveRecord::RecordNotFound, :with => :render_404
+
   layout 'admin'
 
   def index
@@ -24,28 +26,29 @@ class PskbObjTypeController < ApplicationController
     id = params[:id]
     @pskb_obj_type = PskbObjType.find_by(id: id)
     if @pskb_obj_type.nil?
-      Rails.logger.info("NOT OK")
-    else
-      Rails.logger.info("OK")
+      render_404
     end
   end
 
   def destroy
     id = params[:id]
     @obj_type = PskbObjType.find_by(id: id)
+
+    if @obj_type.nil?
+      render_404
+    end
+
     if @obj_type.destroy
       redirect_to pskb_obj_type_index_path
-    else
-      Rails.logger.info("NOT OK")
     end
   end
 
   def edit
     id = params[:id]
     @pskb_obj_type = PskbObjType.find_by(id: id)
+
     if @pskb_obj_type.nil?
-      Rails.logger.info("NOT OK")
-      return
+      render_404
     end
   end
 
@@ -53,13 +56,11 @@ class PskbObjTypeController < ApplicationController
     id = params[:id]
     @pskb_obj_type = PskbObjType.find_by(id: id)
     if @pskb_obj_type.nil?
-      Rails.logger.info("NOT OK")
-      return
+      render_404
     end
+
     if @pskb_obj_type.update(pskb_type_obj_params)
       redirect_to pskb_obj_type_index_path
-    else
-      Rails.logger.info("NOT OK")
     end
   end
 
