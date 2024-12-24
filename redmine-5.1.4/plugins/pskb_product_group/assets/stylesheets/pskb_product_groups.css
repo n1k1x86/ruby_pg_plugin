@@ -1,0 +1,221 @@
+.pg-table-container {
+    background: #C7D0CC;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table tbody tr[data-state="0"] td {
+    background-color: white;
+}
+
+table tbody tr[data-state="1"] td {
+    background-color: #92cd923b;
+}
+
+table tbody tr[data-state="2"] td {
+    background-color: #f1f14454;
+}
+
+table tbody tr[data-state="3"] td {
+    background-color: #e9848430;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+td {
+    background-color: #fff;
+}
+
+.hidden-td {
+    display: none;
+}
+
+tr:hover td {
+    background-color: #f1f1f1;
+}
+
+/* Стили для модального окна */
+.modal-form {
+    display: none;
+    position: fixed;
+    background: #ffffff85;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 50%;
+}
+
+.rev-button, .del-button, .edit-button {
+    margin: 4px
+}
+
+.close-btn, .edit-close-btn {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+.close-btn:hover,
+.close-btn:focus,
+.edit-close-btn:hover,
+.edit-close-btn:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.disabled-btn {
+    pointer-events: none;
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.add-button {
+    font-size: 16px;
+    border-radius: 5px;
+    color: black;
+    margin-top: 10px;
+}
+
+.add-button:hover {
+    background-color: #45a049;
+}
+
+/* Стиль для формы */
+form div {
+    margin-bottom: 10px;
+}
+
+.action-div {
+    text-align: center;
+}
+
+.neg-div {
+    text-align: center;
+}
+
+.accept-button {
+    color: green;
+}
+
+.reject-button {
+    color: red;
+}
+
+/* Стили для модального окна отклонение */
+
+/* .department-init {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    gap: 15px;
+}
+
+#approved_text {
+    color: #13ea4e;
+}
+
+#reject_text {
+    color: #ea1313;
+} */
+
+.reject-modal-pg {
+    display: none;
+    position: fixed;
+    background: #ffffff85;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.reject-modal-content-pg {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px 20px 0px 20px;
+    border: 1px solid #888;
+    border-radius: 10px;
+    width: 50%;
+}
+
+#neg-container {
+    margin: 10px 0px 10px 0px;
+}
+
+.reject-btn-pg{
+    color: white !important;
+    font-size: 15px;
+    background: red;
+    cursor: pointer;
+}
+
+.reject-close-btn-pg {
+    color: black;
+    font-size: 15px;
+    margin-top: 0px;
+}
+
+.reject-close-btn-pg:hover,
+.reject-close-btn-pg:focus {
+    color: #aaa;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#reject-comment-container-pg {
+    margin: 0 auto;
+}
+
+.reject-actions-pg {
+    margin: 10px 10px 10px 0px;
+}
+
+.reject-comment-pg {
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    border: 1px solid #ddd;
+    resize: none;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#notify-pg {
+    color: red;
+    font-size: 0.9em;
+    display: none;
+}
+
+button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}

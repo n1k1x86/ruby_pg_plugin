@@ -8,5 +8,10 @@ Rails.application.routes.draw do
     end
   end
   resources :pskb_product_groups_issues, only: [:index, :new, :show, :destroy, :create, :update, :edit]
-
+  resources :issues do 
+    member do 
+      post :approve_issue_by_pg
+      post :reject_issue_by_pg
+    end
+  end
 end

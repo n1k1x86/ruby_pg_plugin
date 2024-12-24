@@ -1,121 +1,4 @@
-<style>
-    .pg-table-container {
-      background: #C7D0CC;
-      padding: 10px;
-      border-radius: 10px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    table tbody tr[data-state="0"] td {
-      background-color: white;
-    }
-
-    table tbody tr[data-state="1"] td {
-      background-color: #92cd923b;
-    }
-
-    table tbody tr[data-state="2"] td {
-      background-color: #f1f14454;
-    }
-
-    table tbody tr[data-state="3"] td {
-      background-color: #e9848430;
-    }
-  
-    th, td {
-      padding: 12px;
-      text-align: left;
-      border: 1px solid #ddd;
-    }
-  
-    th {
-      background-color: #f4f4f4;
-      font-weight: bold;
-    }
-  
-    td {
-      background-color: #fff;
-    }
-
-    .hidden-td {
-      display: none;
-    }
-  
-    tr:hover td {
-      background-color: #f1f1f1;
-    }
-  
-    /* Стили для модального окна */
-    .modal-form {
-      display: none;
-      position: fixed;
-      background: #ffffff85;
-      z-index: 1;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0, 0, 0, 0.4);
-    }
-  
-    .modal-content {
-      background-color: #fefefe;
-      margin: 15% auto;
-      padding: 20px;
-      border: 1px solid #888;
-      width: 50%;
-    }
-
-    .rev-button, .del-button, .edit-button {
-      margin: 4px
-    }
-  
-    .close-btn, .edit-close-btn {
-        color: #aaa;
-        float: right;
-        font-size: 28px;
-        font-weight: bold;
-    }
-    .close-btn:hover,
-    .close-btn:focus,
-    .edit-close-btn:hover,
-    .edit-close-btn:focus {
-        color: black;
-        text-decoration: none;
-        cursor: pointer;
-    }
-
-    .disabled-btn {
-      pointer-events: none;
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-  
-    .add-button {
-      font-size: 16px;
-      border-radius: 5px;
-      color: black;
-      margin-top: 10px;
-    }
-
-    .add-button:hover {
-      background-color: #45a049;
-    }
-  
-    /* Стиль для формы */
-    form div {
-      margin-bottom: 10px;
-    }
-
-    .action-div {
-      text-align: center;
-    }
-</style>
+<%= stylesheet_link_tag 'pskb_product_groups', plugin: 'pskb_product_group' %>
 <div class='pg-table-container'>
   <hr>
   <div id="issue_id" style="display: none;"><%= issue_id %></div>
@@ -185,6 +68,7 @@
         <th>Ответственность (%)</th>
         <th>Владелец</th>
         <th>Действия</th>
+        <th>Согласование</th>
       </tr>
     </thead>
     <tbody>
@@ -200,274 +84,42 @@
               <button type="submit" class="edit-button">Редактировать</button><button type="submit" class="del-button">Удалить</button>
             </div>
           </td>
+          <td>
+            <div class="neg-div">
+              <% if product[5].state == PskbDomain::NEG_STAT[:IN_PROG] %>
+              <button type="submit" onclick="approveIssueByPg(<%= product[6] %>,<%= product[5].id %>)" id="accept-button-pg" class="accept-button">✔</button>
+              <button type="submit" onclick="rejectIssueByPg(<%= product[6] %>, <%= product[5].id %>)" id="reject-button-pg" class="reject-button">✘</button>
+              <% elsif product[5].state == PskbDomain::NEG_STAT[:APPROVED] %>
+                <p>Согласовано владельцем продуктовой группы</p>
+              <% else %>
+                <p>Отклонено владельцем продуктовой группы</p>
+              <% end %>
+              </div>
+            </div>
+          </td>
         </tr>
       <% end %>
     </tbody>
   </table>
+  <div id="reject-modal-pg" class="reject-modal-pg">
+    <div id="modal-content-pg" class="reject-modal-content-pg">
+      <div>
+          <h2>Причина отклонения</h2>
+      </div>
+      <div id="reject-comment-container-pg">
+          <textarea id="reject-comment-pg" class="reject-comment-pg" placeholder="Оставьте ваш комментарий"></textarea>
+          <div id="notify-pg">Комментарий должен быть больше 5 символов!</div>
+      </div>
+      <div class="reject-actions-pg">
+          <button id="reject-issue-btn-pg" class="reject-btn-pg">Отклонить</button>
+          <button id="reject-close-btn-pg" class="reject-close-btn-pg">Отменить</button>
+      </div>
+    </div>
+  </div>
   <%= button_tag 'Добавить продуктовую группу', class: 'add-button', id: 'add-group-btn' %>
   <%= button_tag 'Сохранить продуктовые группы', class: 'add-button disabled-btn', id: 'save-groups-btn' %>
   <hr>
 </div>
-  <script>
-    var rowsState = {};
 
-    // Получаем элементы
-    const modalAdd = document.getElementById("new-group-modal");
-    const modalEdit = document.getElementById("edit-group-modal");
-
-    const openBtnAdd = document.getElementById("add-group-btn");
-
-    const delBtns = document.querySelectorAll(".del-button");
-    const editBtns = document.querySelectorAll(".edit-button");
-
-    const saveBtn = document.getElementById("save-groups-btn");
-
-    function extractData(row){
-      const pgId = row.cells[1].textContent;
-      const percentage = row.cells[2].textContent;
-      const pgIssueId = row.cells[4].textContent;
-      const issueId = document.getElementById("issue_id").textContent;
-
-      return {
-        pgId: pgId,
-        percentage: percentage,
-        pgIssueId: pgIssueId,
-        issueId: issueId
-      }
-    }
-
-    function saveGroupsEvent() {
-      const rows = document.getElementById("pgTable").getElementsByTagName('tbody')[0].rows;
-      let dataJson = {
-        pgIssuesData: {
-          "0": [],
-          "1": [],
-          "2": [],
-          "3": []
-        }
-      }
-      for (let row of rows) {
-        dataJson.pgIssuesData[row.dataset.state].push(extractData(row));
-      }
-
-      const xhr = new XMLHttpRequest();
-      xhr.open('POST', '/pskb_product_groups_issues', false);
-      xhr.setRequestHeader('Content-Type', 'application/json');
-      xhr.setRequestHeader('Accept', 'application/json');
-
-      const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-      xhr.setRequestHeader('X-CSRF-Token', csrfToken);
-
-      xhr.send(JSON.stringify(dataJson));
-
-      if (xhr.readyState === 4) {
-        if (xhr.status === 201) {
-          const response = JSON.parse(xhr.responseText);
-          console.log('Success:', response);
-          window.location.reload();
-        } else {
-          const response = JSON.parse(xhr.responseText);
-          console.log(response)
-          alert(response.error);
-          console.error('Error:', xhr.status, xhr.statusText);
-        }
-      }
-    };
-
-    saveBtn.addEventListener('click', saveGroupsEvent);
-
-    function delBtnEvent() {
-      const row = this.closest('tr');
-      if (row.dataset.state == "3"){
-        return
-      }
-      if (row.dataset.state == "1"){
-        row.remove();
-      } else {
-        row.dataset.state = "3";
-        saveBtn.classList.remove('disabled-btn')
-      }
-    }
-
-    function editBtnEvent() {
-      const row = this.closest('tr');
-      const rowIndex = row.rowIndex - 1;
-
-      var productGroup = row.cells[1].textContent;
-      var perc = row.cells[2].textContent;
-
-      var selectPg = document.getElementById('edit-pg-selected');
-      var percInput = document.getElementById('edit-percentage');
-      var editedRow = document.getElementById('edited-row');
-
-      selectPg.value = productGroup;
-      percInput.value = perc;
-      editedRow.value = rowIndex;
-
-      modalEdit.style.display = "block";
-    }
-
-    delBtns.forEach(btn => {
-      btn.addEventListener('click', delBtnEvent);
-    })
-
-    editBtns.forEach(btn => {
-      btn.addEventListener('click', editBtnEvent);
-    })
-
-    const closeBtn = document.querySelector(".close-btn");
-    const closeBtnEdit = document.querySelector('.edit-close-btn');
-
-    closeBtnEdit.onclick = function() {
-      modalEdit.style.display = "none";
-    }
-
-    // Открытие модального окна
-    openBtnAdd.onclick = function() {
-      modalAdd.style.display = "block";
-    }
-  
-    // Закрытие модального окна
-    closeBtn.onclick = function() {
-      modalAdd.style.display = "none";
-    }
-  
-    // Закрытие окна при клике вне модального окна
-    window.onclick = function(event) {
-      if (event.target == modalAdd) {
-        modalAdd.style.display = "none";
-      } else if (event.target == modalEdit){
-        modalEdit.style.display == "none";
-      }
-    }
-
-    function createBtn(btn_class, eventCallback, textContent) {
-      const btn = document.createElement('button');
-      btn.type = 'submit';
-      btn.classList.add(btn_class);
-      btn.textContent = textContent;
-      btn.addEventListener('click', eventCallback);
-
-      return btn;
-    }
-
-    // Добавление данных в таблицу
-    function addTableRows(tableId, formObj){
-      let table = document.getElementById(tableId).getElementsByTagName('tbody')[0];
-
-      let newRow = table.insertRow();
-      newRow.dataset.state = "1";
-      newRow.dataset.initState = "1";
-      
-      const cell0 = newRow.insertCell(0);
-      const cell1 = newRow.insertCell(1);
-      const cell2 = newRow.insertCell(2);
-      const cell3 = newRow.insertCell(3);
-      const cell4 = newRow.insertCell(4);
-      const cell5 = newRow.insertCell(5);
-
-      cell0.textContent = formObj.groupName;
-      cell1.textContent = formObj.pskb_product_groups_id;
-      cell1.classList.add('hidden-td');
-
-      cell2.textContent = formObj.percentage;
-      cell3.textContent = formObj.owner_name;
-      cell4.textContent = "-1";
-      cell4.classList.add('hidden-td');
-
-
-      const delButton = createBtn('del-button', delBtnEvent, 'Удалить');
-      const editButton = createBtn('edit-button', editBtnEvent, 'Редактировать');
-
-      const divBtns = document.createElement('div');
-      divBtns.classList.add('action-div')
-
-      divBtns.appendChild(editButton);
-      divBtns.appendChild(delButton);
-      
-
-      cell5.appendChild(divBtns);
-      saveBtn.classList.remove('disabled-btn')
-    }
-
-    // Редактирование строки
-    function editTableRow(tableId, formObj) {
-      let table = document.getElementById(tableId).getElementsByTagName('tbody')[0];
-      let row = table.rows[formObj.rowIndex];
-
-      row.cells[0].textContent = formObj.groupName;
-      row.cells[1].textContent = formObj.groupId;
-      row.cells[2].textContent = formObj.percentage;
-      row.cells[3].textContent = formObj.owner_name;
-
-      if (row.dataset.initState == "1"){
-        return
-      } else {
-        row.dataset.state = "2";
-      }
-      saveBtn.classList.remove('disabled-btn')
-
-    }
-
-    function getOwner(groupId) {
-      const xhr = new XMLHttpRequest()
-      xhr.open("GET", `/pskb_product_groups/${groupId}/get_owner`, false)
-      xhr.send();
-
-      if (xhr.status === 200) {
-        return JSON.parse(xhr.responseText);
-      }
-      
-    }
-
-    document.getElementById('addForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-
-        const formData = new FormData(this)
-        const formDataObject = {};
-
-        const selectedOption = document.querySelector('#add_pg_selected');
-        const groupId = selectedOption.value;
-        const groupName = selectedOption.options[selectedOption.selectedIndex].text;
-
-        formData.forEach((value, key) => {
-            formDataObject[key] = value;
-        });
-
-        formDataObject['groupId'] = groupId;
-        formDataObject['groupName'] = groupName;
-
-        const owner = getOwner(groupId);
-        formDataObject['owner_name'] = owner.name
-
-        addTableRows('pgTable', formDataObject)
-        closeBtn.onclick();
-        this.reset();
-      }
-    )
-
-    document.getElementById('editForm').addEventListener('submit', function(event){
-      event.preventDefault();
-
-      const formData = new FormData(this)
-      const formDataObject = {};
-
-      const selectedOption = document.querySelector('#edit-pg-selected');
-      const groupId = selectedOption.value;
-      const groupName = selectedOption.options[selectedOption.selectedIndex].text;
-
-      formData.forEach((value, key) => {
-          formDataObject[key] = value;
-      });
-
-      formDataObject['groupId'] = groupId;
-      formDataObject['groupName'] = groupName;
-
-      const owner = getOwner(groupId);
-      formDataObject['owner_name'] = owner.name
-
-      editTableRow('pgTable', formDataObject)
-      closeBtnEdit.onclick();
-      this.reset();
-    })
-  </script>
+<%= javascript_include_tag 'pskb_neg_actions.js', plugin: 'pskb_product_group' %>
+<%= javascript_include_tag 'pskb_product_groups.js', plugin: 'pskb_product_group' %>

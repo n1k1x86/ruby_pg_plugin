@@ -1,4 +1,5 @@
 require 'redmine'
+require File.dirname(__FILE__) + '/../pskb_domain/constants'
 
 Redmine::Plugin.register :pskb_product_group do
   name 'Pskb Product Group plugin'
@@ -8,21 +9,7 @@ Redmine::Plugin.register :pskb_product_group do
   url 'http://example.com/path/to/plugin'
   author_url 'http://example.com/about'
 
-  # Rails.configuration.to_prepare do
-  #   require_dependency 'pskb_product_group/patches/user_patch'
-  #   User.include PskbProductGroup::Patches::UserPatch unless User.included_modules.include?(PskbProductGroup::Patches::UserPatch)
-  # end
-  unless Mailer.included_modules.include?(PskbProductGroup::Patches::MailerPatch)
-    Mailer.send(:include, PskbProductGroup::Patches::MailerPatch)
-  end
-
-  unless Issue.included_modules.include?(PskbProductGroup::Patches::IssuePatch)
-    Issue.send(:include, PskbProductGroup::Patches::IssuePatch)
-  end
-
   class ViewHookListner < Redmine::Hook::ViewListener
-
-    render_on(:view_issues_show_details_bottom, :partial => 'pskb_product_groups/extra_issue_info')
 
     def view_issues_show_details_bottom(context = {})
       @issue = context[:issue]
@@ -30,16 +17,20 @@ Redmine::Plugin.register :pskb_product_group do
         @issues = Issue.all
         @pskb_product_groups = PskbProductGroups.all
         @product_groups = PskbProductGroupsIssue.where("issue_id = ?", @issue.id)
-        @pg_percentage_table = []
+        pg_percentage_table = []
         for el in @product_groups do
           pg = PskbProductGroups.find_by(id: el.pskb_product_groups_id)
-          if pg.nil?
+          neg_obj = Negotiation.where(iss_id: @issue.id, value: pg.id)[0]
+
+          if pg.nil? || neg_obj.nil?
             next
           end
           owner = User.find(pg.owner_id)
-          @pg_percentage_table << [pg.name, pg.id, el.percentage, owner.name, el.id]
+          pg_percentage_table << [pg.name, pg.id, el.percentage, owner.name, el.id, neg_obj, @issue.id]
+          puts "INIT RB AFTER"
+          p pg_percentage_table
         end
-        context[:controller].render_to_string(partial: 'pskb_product_groups/extra_issue_info', locals: { product_groups: @pg_percentage_table, issues: @issues, pskb_product_groups: @pskb_product_groups, issue_id: @issue.id })
+        context[:controller].render_to_string(partial: 'pskb_product_groups/extra_issue_info', locals: { product_groups: pg_percentage_table, issues: @issues, pskb_product_groups: @pskb_product_groups, issue_id: @issue.id })
       end
     end
 
@@ -53,8 +44,18 @@ Redmine::Plugin.register :pskb_product_group do
       end
     end
   end
+
+  unless Mailer.included_modules.include?(PskbProductGroup::Patches::MailerPatch)
+    Mailer.send(:include, PskbProductGroup::Patches::MailerPatch)
+  end
+
+  IssuesController.send(:prepend, PskbProductGroup::Patches::IssueControllerPatch)
+
+  unless Issue.included_modules.include?(PskbProductGroup::Patches::IssuePatch)
+    Issue.send(:include, PskbProductGroup::Patches::IssuePatch)
+  end
+
+  project_module :pskb_product_group do
+    permission :approve_issue_by_pg_perm, { issues: [:approve_issue_by_pg, :reject_issue_by_pg] }, require: :loggedin
+  end
 end
-
-
-
-

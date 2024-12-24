@@ -101,6 +101,8 @@ class PskbProductGroupsIssuesController < ApplicationController
   def delete_operation(pg_issues_deleted)
     for record in pg_issues_deleted do 
       @pg_issue = PskbProductGroupsIssue.find_by(id: record["pgIssueId"])
+      @pg_neg_obj = Negotiation.where(author_id: PskbProductGroups.find(record["pgId"]).owner_id, iss_id: record["issueId"])[0]
+      @pg_neg_obj.destroy
       if !@pg_issue.destroy
         return false
       end
@@ -127,6 +129,9 @@ class PskbProductGroupsIssuesController < ApplicationController
       if !@pg_issue.save 
         return false
       end
+      obj_type = PskbDomain::PSKB_TYPES
+      @neg_obj = Negotiation.new(author_id: PskbProductGroups.find(record["pgId"]).owner_id, type_id: obj_type[:PG], value: record["pgId"], iss_id: record["issueId"], state: PskbDomain::NEG_STAT[:IN_PROG])
+      @neg_obj.save
     end
     return true
   end

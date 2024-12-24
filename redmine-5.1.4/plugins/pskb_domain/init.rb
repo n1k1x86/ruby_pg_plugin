@@ -1,3 +1,5 @@
+require File.dirname(__FILE__) + '/constants'
+
 Redmine::Plugin.register :pskb_domain do
   name 'Pskb Domain plugin'
   author 'Author name'
@@ -5,13 +7,6 @@ Redmine::Plugin.register :pskb_domain do
   version '0.0.1'
   url 'http://example.com/path/to/plugin'
   author_url 'http://example.com/about'
-
-  ISSUE_STATS = {
-    "NEG": 2,
-    "CLOSED": 3,
-    "IN_WORK": 1,
-    "NEW": 4
-  }
 
   Redmine::MenuManager.map :admin_menu do |menu|
     menu.push :pskb_obj_type, { controller: 'pskb_obj_type', action: 'index' },
@@ -22,5 +17,4 @@ Redmine::Plugin.register :pskb_domain do
     caption: 'Статусы согласований',
     html: { class: 'icon icon-issue-edit issue-statuses' }
   end
-
 end
