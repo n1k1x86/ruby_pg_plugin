@@ -19,12 +19,17 @@ function extractData(row){
     const percentage = row.cells[2].textContent;
     const pgIssueId = row.cells[4].textContent;
     const issueId = document.getElementById("issue_id").textContent;
+    let negId = "0";
+    if (row.cells[7] !== undefined) {
+        negId = row.cells[7].textContent;
+    }
 
     return {
-    pgId: pgId,
-    percentage: percentage,
-    pgIssueId: pgIssueId,
-    issueId: issueId
+        pgId: pgId,
+        percentage: percentage,
+        pgIssueId: pgIssueId,
+        issueId: issueId,
+        negId: negId
     }
 }
 
@@ -39,7 +44,7 @@ function saveGroupsEvent() {
     }
     }
     for (let row of rows) {
-    dataJson.pgIssuesData[row.dataset.state].push(extractData(row));
+        dataJson.pgIssuesData[row.dataset.state].push(extractData(row));
     }
 
     const xhr = new XMLHttpRequest();

@@ -51,12 +51,12 @@ module PskbProductGroup
 
           def all_vote?
             neg_records = Negotiation.where(iss_id: @issue.id)
-            neg_records.any? {|record| !record.state == PskbDomain::NEG_STAT[:IN_PROG]}
+            neg_records.all? {|record| record.state != PskbDomain::NEG_STAT[:IN_PROG]} and @issue.approved_owner
           end
 
           def check_votes
             neg_records = Negotiation.where(iss_id: @issue.id)
-            neg_records.all? {|record| !record.state == PskbDomain::NEG_STAT[:APPROVED]}
+            neg_records.all? {|record| record.state == PskbDomain::NEG_STAT[:APPROVED]} and @issue.approved_owner
           end
 
           def find_project 

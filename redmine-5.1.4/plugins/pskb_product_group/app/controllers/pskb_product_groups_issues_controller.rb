@@ -4,6 +4,10 @@ class PskbProductGroupsIssuesController < ApplicationController
 
   def create
     pg_issues_by_status = params["pgIssuesData"]
+
+    puts "LOGI BOGI"
+    Rails.logger.info(pg_issues_by_status)
+
     all_pg_issues = pg_issues_by_status["0"] + pg_issues_by_status["1"] + pg_issues_by_status["2"]
     if all_pg_issues.length == 0
       render json: {"error": "Сумма процентов должна равняться 100", "error_code": "0"}, status: :unprocessable_entity
@@ -99,13 +103,13 @@ class PskbProductGroupsIssuesController < ApplicationController
   end
 
   def update_params_pg_issue
-    params.require(:pskb_product_groups_issue).permit(:id, :issue_id, :pskb_product_groups_id, :percentage)
+    params.require(:pskb_product_groups_issue).permit(:id, :issue_id, :pskb_product_groups_id, :percentage, :negId)
   end
 
   def delete_operation(pg_issues_deleted)
     for record in pg_issues_deleted do 
       @pg_issue = PskbProductGroupsIssue.find_by(id: record["pgIssueId"])
-      @pg_neg_obj = Negotiation.where(author_id: PskbProductGroups.find(record["pgId"]).owner_id, iss_id: record["issueId"])[0]
+      @pg_neg_obj = Negotiation.find_by(id: record["negId"])
       @pg_neg_obj.destroy
       if !@pg_issue.destroy
         return false
@@ -117,10 +121,16 @@ class PskbProductGroupsIssuesController < ApplicationController
   def update_operation(pg_issues_updated)
     for record in pg_issues_updated do 
       @pg_issue = PskbProductGroupsIssue.find_by(id: record["pgIssueId"])
+
+      @negObj = Negotiation.find_by(id: record["negId"]) 
+
       @pg_issue.percentage = record["percentage"]
       @pg_issue.pskb_product_groups_id = record["pgId"]
 
-      if !@pg_issue.save 
+      @negObj.state = PskbDomain::NEG_STAT[:IN_PROG]
+      @negObj.value = record["pgId"]
+
+      if !@pg_issue.save || !@negObj.save
         return false
       end
     end

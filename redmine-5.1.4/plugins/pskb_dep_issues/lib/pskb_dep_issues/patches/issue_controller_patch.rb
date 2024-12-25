@@ -13,8 +13,10 @@ module PskbDepIssues
           def approve_issue
             @issue = Issue.find(params[:id])
             @dep_user = User.current
+            if all_pg_voices_true?
+              @issue.status_id = ISSUE_NEW_STAT
+            end
             @issue.approved_owner = true
-            @issue.status_id = ISSUE_NEW_STAT
             @issue.save 
             send_mail_approve
             redirect_to @issue
@@ -67,6 +69,14 @@ module PskbDepIssues
             subject = "Подразделения"
             user = User.find(@issue.author_id)
             Mailer.deliver_department_approve_issue(user, subject, @issue, nil, @dep_user)
+          end
+
+          def all_pg_voices_true?
+            neg_records = Negotiation.where(iss_id: @issue.id)
+            if neg_records.length != 0
+              neg_records.all? {|record| record.state == PskbDomain::NEG_STAT[:APPROVED]}
+            end
+            false
           end
         end
       end

@@ -26,7 +26,7 @@ Redmine::Plugin.register :pskb_product_group do
             next
           end
           owner = User.find(pg.owner_id)
-          pg_percentage_table << [pg.name, pg.id, el.percentage, owner.name, el.id, neg_obj, @issue.id]
+          pg_percentage_table << [pg.name, pg.id, el.percentage, owner.name, el.id, neg_obj, @issue.id, neg_obj.id]
           puts "INIT RB AFTER"
           p pg_percentage_table
         end
