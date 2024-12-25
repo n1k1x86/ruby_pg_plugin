@@ -5,6 +5,10 @@ class PskbProductGroupsIssuesController < ApplicationController
   def create
     pg_issues_by_status = params["pgIssuesData"]
     all_pg_issues = pg_issues_by_status["0"] + pg_issues_by_status["1"] + pg_issues_by_status["2"]
+    if all_pg_issues.length == 0
+      render json: {"error": "Сумма процентов должна равняться 100", "error_code": "0"}, status: :unprocessable_entity
+      return
+    end
     issue_id = all_pg_issues[0]["issueId"]
     if !check_percentage(all_pg_issues)
       render json: {"error": "Сумма процентов должна равняться 100", "error_code": "0"}, status: :unprocessable_entity
