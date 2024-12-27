@@ -5,9 +5,6 @@ class PskbProductGroupsIssuesController < ApplicationController
   def create
     pg_issues_by_status = params["pgIssuesData"]
 
-    puts "LOGI BOGI"
-    Rails.logger.info(pg_issues_by_status)
-
     all_pg_issues = pg_issues_by_status["0"] + pg_issues_by_status["1"] + pg_issues_by_status["2"]
     if all_pg_issues.length == 0
       render json: {"error": "Сумма процентов должна равняться 100", "error_code": "0"}, status: :unprocessable_entity

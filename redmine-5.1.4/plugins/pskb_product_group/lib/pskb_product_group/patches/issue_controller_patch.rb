@@ -10,6 +10,8 @@ module PskbProductGroup
             id = params[:issue_id]
             pgNegId = params[:pgNegId]
 
+            @pg_owner = User.current
+
             @issue = Issue.find_by(id: id)
             if @issue.nil?
               render_404
@@ -26,7 +28,8 @@ module PskbProductGroup
               end
             end
 
-            # send_mail_approve
+            send_mail_approve_pg
+
             render json: {"success": "good"}, status: 200
           end
 
@@ -43,7 +46,9 @@ module PskbProductGroup
             @negObj = Negotiation.find_by(id: @pgNegId)
             @negObj.state = PskbDomain::NEG_STAT[:REJECTED]
             @negObj.save
-            # redirect ?
+
+            send_mail_rejection_pg
+
             render json: {"success": "good"}, status: 200
           end
 
@@ -64,28 +69,16 @@ module PskbProductGroup
             @project = Project.find(@issue.project_id)
           end
 
-          def save_dep_id
-            @issue.department_id = params[:issue][:department_id]
-          end
-
-          def send_mail_to_dep_owner
-            if !@issue.errors.any? && @issue.tracker_id == 1
-              subject = "Подразделения"
-              user = User.find(PskbDepIssue.find(@issue.department_id).user_id)
-              Mailer.deliver_department_set(user, subject, @issue)
-            end
-          end
-
-          def send_mail_rejection
-            subject = "Подразделения"
+          def send_mail_rejection_pg
+            subject = "Согласование продуктовых групп"
             user = User.find(@issue.author_id)
-            Mailer.deliver_department_reject_issue(user, subject, @issue, @comment, @dep_user)
+            Mailer.deliver_product_groups_pg_rejected(user, subject, @comment, @issue, @pg_owner)
           end
 
-          def send_mail_approve 
-            subject = "Подразделения"
+          def send_mail_approve_pg
+            subject = "Согласование продуктовых групп"
             user = User.find(@issue.author_id)
-            Mailer.deliver_department_approve_issue(user, subject, @issue, nil, @dep_user)
+            Mailer.deliver_product_groups_pg_approved(user, subject, nil, @issue, @pg_owner)
           end
         end
       end
