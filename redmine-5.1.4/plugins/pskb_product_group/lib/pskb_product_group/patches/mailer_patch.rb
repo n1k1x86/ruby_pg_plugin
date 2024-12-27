@@ -29,7 +29,7 @@ module PskbProductGroup
           @subject = subject
           @issue_url = url_for(:controller => 'issues', :action => 'show', :id => issue_obj.id)
           @issue = issue_obj
-          
+
           if !pg_owner.nil?
             @pg_owner = pg_owner
             @pg_owner_url = url_for(:controller => 'users', :action => 'show', :id => pg_owner.id)
@@ -42,7 +42,7 @@ module PskbProductGroup
           @subject = subject
           @issue_url = url_for(:controller => 'issues', :action => 'show', :id => issue_obj.id)
           @issue = issue_obj
-          @comment = comment
+          @comment = message
 
           if !pg_owner.nil?
             @pg_owner = pg_owner
