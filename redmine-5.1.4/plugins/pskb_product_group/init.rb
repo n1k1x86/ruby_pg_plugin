@@ -22,11 +22,11 @@ Redmine::Plugin.register :pskb_product_group do
           pg = PskbProductGroups.find_by(id: el.pskb_product_groups_id)
           neg_obj = Negotiation.where(iss_id: @issue.id, value: pg.id)[0]
 
-          if pg.nil? || neg_obj.nil?
+          if pg.nil?
             next
           end
           owner = User.find(pg.owner_id)
-          pg_percentage_table << [pg.name, pg.id, el.percentage, owner.name, el.id, neg_obj, @issue.id, neg_obj.id, owner.id]
+          pg_percentage_table << [pg.name, pg.id, el.percentage, owner.name, el.id, neg_obj, @issue.id, !neg_obj.nil? ? neg_obj.id : nil, owner.id]
           puts "INIT RB AFTER"
           p pg_percentage_table
         end

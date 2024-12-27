@@ -73,10 +73,12 @@ module PskbDepIssues
 
           def all_pg_voices_true?
             neg_records = Negotiation.where(iss_id: @issue.id)
+            product_groups = PskbProductGroupsIssue.where(issue_id: @issue.id)
             if neg_records.length != 0
-              neg_records.all? {|record| record.state == PskbDomain::NEG_STAT[:APPROVED]}
+              return neg_records.all? {|record| record.state == PskbDomain::NEG_STAT[:APPROVED]}
+            elsif product_groups.length != 0
+              return true
             end
-            false
           end
         end
       end

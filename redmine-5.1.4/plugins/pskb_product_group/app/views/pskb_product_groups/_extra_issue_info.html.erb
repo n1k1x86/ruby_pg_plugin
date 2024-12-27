@@ -2,73 +2,75 @@
 <div class='pg-table-container'>
   <hr>
   <div id="issue_id" style="display: none;"><%= issue_id %></div>
-  
-  <div id="new-group-modal" class="modal-form" style="display: none;">
-    <div class="modal-content">
-      <span class="close-btn">&times;</span>
-          <h2>Ответственность продуктовой группы</h2>
-          <%= form_with model: @pskb_product_groups_issue, method: :post, url: '#', local: true, id: 'addForm' do |form| %>
-          <div>
-              <%= form.label :percentage, 'Доля ответственности' %>
-              <%= form.number_field :percentage, in: 1..100, step: 1, required: true %>
-          </div>
-          
-          <div style="display: none;">
-              <%= form.label :issue_id, 'Issue' %>
-              <%= form.collection_select :issue_id, issues, :id, :id, prompt: 'Select issue', selected: @issue.id, required: true %>
-          </div>
-          
-          <div>
-              <%= form.label :pskb_product_groups_id, 'Продуктовая группа' %>
-              <%= form.collection_select :pskb_product_groups_id, pskb_product_groups, :id, :name, { prompt: 'Select product group' }, required: true, id: 'add_pg_selected' %>
-          </div>
-  
-          <div>
-              <%= form.button 'Добавить'%>
-          </div>
-          <% end %>
+  <% if @issue.status_id == PskbDomain::ISSUE_STATS[:NEG] %>
+    <div id="new-group-modal" class="modal-form" style="display: none;">
+      <div class="modal-content">
+        <span class="close-btn">&times;</span>
+            <h2>Ответственность продуктовой группы</h2>
+            <%= form_with model: @pskb_product_groups_issue, method: :post, url: '#', local: true, id: 'addForm' do |form| %>
+            <div>
+                <%= form.label :percentage, 'Доля ответственности' %>
+                <%= form.number_field :percentage, in: 1..100, step: 1, required: true %>
+            </div>
+            
+            <div style="display: none;">
+                <%= form.label :issue_id, 'Issue' %>
+                <%= form.collection_select :issue_id, issues, :id, :id, prompt: 'Select issue', selected: @issue.id, required: true %>
+            </div>
+            
+            <div>
+                <%= form.label :pskb_product_groups_id, 'Продуктовая группа' %>
+                <%= form.collection_select :pskb_product_groups_id, pskb_product_groups, :id, :name, { prompt: 'Select product group' }, required: true, id: 'add_pg_selected' %>
+            </div>
+    
+            <div>
+                <%= form.button 'Добавить'%>
+            </div>
+            <% end %>
+      </div>
     </div>
-  </div>
 
-  <div id="edit-group-modal" class="modal-form" style="display: none;">
-    <div class="modal-content">
-      <span class="edit-close-btn">&times;</span>
-          <h2>Ответственность продуктовой группы</h2>
-          <%= form_with model: @pskb_product_groups_issue, method: :post, url: '#', local: true, id: 'editForm' do |form| %>
-          <div>
-              <%= form.label :percentage, 'Доля ответственности' %>
-              <%= form.number_field :percentage, in: 1..100, step: 1, required: true, id: 'edit-percentage' %>
-          </div>
-          
-          <div style="display: none;">
-              <%= form.label :issue_id, 'Issue' %>
-              <%= form.collection_select :issue_id, issues, :id, :id, prompt: 'Select issue', selected: @issue.id, required: true %>
-          </div>
-          <div style="display: none;">
-            <%= form.label 'rowIndex', 'rowIndex' %>
-            <%= form.number_field 'rowIndex', id: 'edited-row'%>
-          </div>
-          
-          <div>
-              <%= form.label :pskb_product_groups_id, 'Продуктовая группа' %>
-              <%= form.collection_select :pskb_product_groups_id, pskb_product_groups, :id, :name, { prompt: 'Select product group' }, required: true, id: 'edit-pg-selected' %>
-          </div>
-  
-          <div>
-              <%= form.button 'Изменить'%>
-          </div>
-          <% end %>
+    <div id="edit-group-modal" class="modal-form" style="display: none;">
+      <div class="modal-content">
+        <span class="edit-close-btn">&times;</span>
+            <h2>Ответственность продуктовой группы</h2>
+            <%= form_with model: @pskb_product_groups_issue, method: :post, url: '#', local: true, id: 'editForm' do |form| %>
+            <div>
+                <%= form.label :percentage, 'Доля ответственности' %>
+                <%= form.number_field :percentage, in: 1..100, step: 1, required: true, id: 'edit-percentage' %>
+            </div>
+            
+            <div style="display: none;">
+                <%= form.label :issue_id, 'Issue' %>
+                <%= form.collection_select :issue_id, issues, :id, :id, prompt: 'Select issue', selected: @issue.id, required: true %>
+            </div>
+            <div style="display: none;">
+              <%= form.label 'rowIndex', 'rowIndex' %>
+              <%= form.number_field 'rowIndex', id: 'edited-row'%>
+            </div>
+            
+            <div>
+                <%= form.label :pskb_product_groups_id, 'Продуктовая группа' %>
+                <%= form.collection_select :pskb_product_groups_id, pskb_product_groups, :id, :name, { prompt: 'Select product group' }, required: true, id: 'edit-pg-selected' %>
+            </div>
+    
+            <div>
+                <%= form.button 'Изменить'%>
+            </div>
+            <% end %>
+      </div>
     </div>
-  </div>
-  
+  <% end %>
   <table id='pgTable' border="1">
     <thead>
       <tr>
         <th>Продуктовая группа</th>
         <th>Ответственность (%)</th>
         <th>Владелец</th>
+        <% if @issue.status_id == PskbDomain::ISSUE_STATS[:NEG] %>
         <th>Действия</th>
         <th>Согласование</th>
+        <% end %>
       </tr>
     </thead>
     <tbody>
@@ -79,48 +81,54 @@
           <td><%= product[2] %></td>
           <td><%= product[3] %></td>
           <td class="hidden-td"><%= product[4] %></td>
-          <td>
-            <div class="action-div">
-              <button type="submit" class="edit-button">Редактировать</button><button type="submit" class="del-button">Удалить</button>
-            </div>
-          </td>
-          <td>
-            <div class="neg-div">
-              <% if product[5].state == PskbDomain::NEG_STAT[:IN_PROG] and (User.current.id == product[8] or User.current.admin?) %>
-              <button type="submit" onclick="approveIssueByPg(<%= product[6] %>,<%= product[5].id %>)" id="accept-button-pg" class="accept-button">✔</button>
-              <button type="submit" onclick="rejectIssueByPg(<%= product[6] %>, <%= product[5].id %>)" id="reject-button-pg" class="reject-button">✘</button>
-              <% elsif product[5].state == PskbDomain::NEG_STAT[:APPROVED] %>
-                <p>Согласовано владельцем продуктовой группы</p>
-              <% elsif product[5].state == PskbDomain::NEG_STAT[:REJECTED] %>
-                <p>Отклонено владельцем продуктовой группы</p>
-              <% else %>
-                <p>В процессе голосования</p>
-              <% end %>
+          <% if @issue.status_id == PskbDomain::ISSUE_STATS[:NEG] %>
+            <td>
+              <div class="action-div">
+                <button type="submit" class="edit-button">Редактировать</button><button type="submit" class="del-button">Удалить</button>
               </div>
-            </div>
-          </td>
-          <td class="hidden-td"><%= product[7] %></td>
-        </tr>
+            </td>
+            <td>
+              <div class="neg-div">
+                <% if product[5].nil? %>
+                  <p>Не определено</p>
+                <% elsif product[5].state == PskbDomain::NEG_STAT[:IN_PROG] and (User.current.id == product[8] or User.current.admin?) %>
+                <button type="submit" onclick="approveIssueByPg(<%= product[6] %>,<%= product[5].id %>)" id="accept-button-pg" class="accept-button">✔</button>
+                <button type="submit" onclick="rejectIssueByPg(<%= product[6] %>, <%= product[5].id %>)" id="reject-button-pg" class="reject-button">✘</button>
+                <% elsif product[5].state == PskbDomain::NEG_STAT[:APPROVED] %>
+                  <p>Согласовано владельцем продуктовой группы</p>
+                <% elsif product[5].state == PskbDomain::NEG_STAT[:REJECTED] %>
+                  <p>Отклонено владельцем продуктовой группы</p>
+                <% else %>
+                  <p>В процессе голосования</p>
+                <% end %>
+                </div>
+              </div>
+            </td>
+            <td class="hidden-td"><%= product[7] %></td>
+          </tr>
+        <% end %>
       <% end %>
     </tbody>
   </table>
-  <div id="reject-modal-pg" class="reject-modal-pg">
-    <div id="modal-content-pg" class="reject-modal-content-pg">
-      <div>
-          <h2>Причина отклонения</h2>
-      </div>
-      <div id="reject-comment-container-pg">
-          <textarea id="reject-comment-pg" class="reject-comment-pg" placeholder="Оставьте ваш комментарий"></textarea>
-          <div id="notify-pg">Комментарий должен быть больше 5 символов!</div>
-      </div>
-      <div class="reject-actions-pg">
-          <button id="reject-issue-btn-pg" class="reject-btn-pg">Отклонить</button>
-          <button id="reject-close-btn-pg" class="reject-close-btn-pg">Отменить</button>
+  <% if @issue.status_id == PskbDomain::ISSUE_STATS[:NEG] %>
+    <div id="reject-modal-pg" class="reject-modal-pg">
+      <div id="modal-content-pg" class="reject-modal-content-pg">
+        <div>
+            <h2>Причина отклонения</h2>
+        </div>
+        <div id="reject-comment-container-pg">
+            <textarea id="reject-comment-pg" class="reject-comment-pg" placeholder="Оставьте ваш комментарий"></textarea>
+            <div id="notify-pg">Комментарий должен быть больше 5 символов!</div>
+        </div>
+        <div class="reject-actions-pg">
+            <button id="reject-issue-btn-pg" class="reject-btn-pg">Отклонить</button>
+            <button id="reject-close-btn-pg" class="reject-close-btn-pg">Отменить</button>
+        </div>
       </div>
     </div>
-  </div>
-  <%= button_tag 'Добавить продуктовую группу', class: 'add-button', id: 'add-group-btn' %>
-  <%= button_tag 'Сохранить и направить на согласование', class: 'add-button disabled-btn', id: 'save-groups-btn' %>
+    <%= button_tag 'Добавить продуктовую группу', class: 'add-button', id: 'add-group-btn' %>
+    <%= button_tag 'Сохранить и направить на согласование', class: 'add-button disabled-btn', id: 'save-groups-btn' %>
+  <% end %>
   <hr>
 </div>
 
