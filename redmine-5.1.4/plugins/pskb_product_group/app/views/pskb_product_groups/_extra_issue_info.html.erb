@@ -86,13 +86,15 @@
           </td>
           <td>
             <div class="neg-div">
-              <% if product[5].state == PskbDomain::NEG_STAT[:IN_PROG] %>
+              <% if product[5].state == PskbDomain::NEG_STAT[:IN_PROG] and (User.current.id == product[8] or User.current.admin?) %>
               <button type="submit" onclick="approveIssueByPg(<%= product[6] %>,<%= product[5].id %>)" id="accept-button-pg" class="accept-button">✔</button>
               <button type="submit" onclick="rejectIssueByPg(<%= product[6] %>, <%= product[5].id %>)" id="reject-button-pg" class="reject-button">✘</button>
               <% elsif product[5].state == PskbDomain::NEG_STAT[:APPROVED] %>
                 <p>Согласовано владельцем продуктовой группы</p>
-              <% else %>
+              <% elsif product[5].state == PskbDomain::NEG_STAT[:REJECTED] %>
                 <p>Отклонено владельцем продуктовой группы</p>
+              <% else %>
+                <p>В процессе голосования</p>
               <% end %>
               </div>
             </div>
