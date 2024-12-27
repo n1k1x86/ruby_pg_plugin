@@ -48,7 +48,12 @@ module PskbDepIssues
           end
 
           def save_dep_id
-            @issue.department_id = params[:issue][:department_id]
+            if @issue.status_id != PskbDomain::ISSUE_STATS[:NEG]
+              return
+            end
+            if !params[:issue][:department_id].nil?
+              @issue.department_id = params[:issue][:department_id]
+            end
           end
 
           def send_mail_to_dep_owner
